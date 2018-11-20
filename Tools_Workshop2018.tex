@@ -1,0 +1,96 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\usepackage{xcolor}
+
+\begin{document}
+%
+\title{Saving Energy Using the READEX Methodology \thanks{The research leading to these results has received funding from the European Union's Horizon 2020 Programme under grant agreement number 671657.}}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Madhura Kumaraswamy \and Anamika Chowdhury \and Michael Gerndt \inst{1} \and
+Second Author\inst{2} \and
+Third Author\inst{3}}
+%
+\authorrunning{Kumaraswamy, M et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{ Department of Informatics, Technical University of Munich, Bavaria, Germany 
+\email{\{kumarasw,chowdhua,gerndt\}@in.tum.de}\\ \and
+ABC Institute \email{@} \\ \and }
+
+\maketitle              % typeset the header of the contribution
+
+\begin{abstract}
+The abstract should briefly summarize the contents of the paper in
+150--250 words.
+
+\keywords{First keyword  \and Second keyword \and Another keyword.}
+\end{abstract}
+
+\textcolor{blue}{General focus:
+\begin{enumerate}
+  \item This paper does not go into technical details, but aims to provide a general guide to interested users about what they can expect if they use READEX for energy tuning and the rational.
+  \item Implementation aspects only if really necessary to understand what happens in the steps.
+  \item No syntax examples, only if absolutely necessary.
+  \item Very few pictures.
+  \item Focus on motivating how things are done, what is the rational to use certain concepts and why he should take certain decisions, e.g., selection of search space of parameters should be done carefully to not run into a search explosion, where to put the phase region, what to do if there is inter-phase dynamism ...
+\end{enumerate}
+}
+
+
+\section{Introduction} \label{sec:introduction}
+\textbf{TUM (2 pages)} \\ \\
+\textcolor{blue}{1. Motivation for energy saving \\
+2. Challenges for exascale computing \\
+3. Introduction to the solution - READEX \\
+4. Score-P, PTF and RRL (short background) \\
+5. Introduce tuning parameters. Details about the frequencies and threads tuning parameters.  \\
+6. Introduce regions, rts's. Ignore interphase here. \\
+7. Different rts's have different best configurations. \\
+8. Say that this paper does not go into technical details, but aims to provide a general guide to interested users about what they can expect if they use READEX for energy tuning and the rational. }
+
+\input{related_work.tex}
+\input{readex_methodology.tex}
+\input{dta.tex}
+\input{tm_generation.tex}
+\input{tm_visualization.tex}
+\input{rat.tex}
+\input{switching_visualization.tex}
+\input{extensions.tex}
+\input{atp.tex}
+\input{acp.tex}
+\input{input.tex}
+\input{calibration.tex}
+\input{results.tex}
+
+
+
+\section{Conclusions} \label{sec:conclusions}
+\textbf{0,5 page}
+
+
+
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+ \bibliographystyle{splncs04}
+ \bibliography{References}
+
+\end{document}
