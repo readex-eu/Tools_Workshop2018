@@ -10,4 +10,24 @@
 
 \subsection{Intra-Phase Plugin} \label{sec:intra-phase}
 
+PTF performs intra-phase dynamism tuning by executing \textbf{readex\_intraphase} plugin when there is no changes of the dynamic characteristics across the sequence of phases.
+
+The plugin can be configured through the \textit{READEX configuration file} where the user can specify significant regions, objectives, system-level tuning parameters and search strategies. The significant regions of an application are produced by \textbf{readex-dyn-detect}~\cite{kumaraswamy2018design} which posses certain dynamism in different characteristics. The objective functions are used to evaluate the effect of different configurations of the tuning parameters. Different supported objective functions are absolute energy consumption, CPU energy consumption, execution time, energy delay product limiting the performance reduction due to energy tuning and total cost of ownership.  The total cost of ownership the summed up cost of the energy in addition to the execution time dependent fraction for hardware and software investment as well as maintenance costs and personnel. 
+
+The normalized form of all the above objectives is the normalized objective value with respect to a metric, for example the number of AVX instructions. These normalized objectives are applied to the plugin that have different regions in different phases but no varying characteristics such as the computational intensity. The normlaized objective would allow to compare the objective values of phase with different number of significant regions. 
+
+The plugin supports system-level tuning parameters such as core and uncore frequency and the number of threads as well as application tuning parameter. The ranges of different tuning parameter can also be specifed to apply for evaluation.
+
+The plugin also allows the user to specify different search algorithms such as exhaustive, individual, random, genetic and so on. The additional parameters for each of the alogrithms can also be specified via this configuration file.
+
+The tuning steps of the \textbf{readex\_intraphase} plugin are as follows:
+
+The first tuning step of PTF is executed with the default configuration of the tuning parameter to collect the program's static information after starting the application. PTF uses a specific analysis strategy to gather program regions and runtime situations only for the first phase of the application. The measurement results are required to evaluate the objective value, for example, time and energy and stored to compare with the results of the last tuning step.
+
+The next step is to tune ATPs as they are specifically independent of the system-level tuning parameter. The application expert can provide such kind of application specific parameters for example algorithmic choices. The detail about ATP is described in section ~\ref{sec:atp}. The plugin provides two new search strategies, \textbf{exhaustive\_atp} and \textbf{individual\_atp} to compute the optimal ATP configuration. The exhausive search space is built from the crossproduct of all valid combinations of ATPs and the idividual stratgey is computed from the domains individually. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and investigates the next domain untill al the domains were explored. The search strategy then used \textbf{exhaustive\_atp} to explore the valid points of a domain. PTF uses these two search strategies to compute the optimal configuration for the given ATPs.   
+
+The third step is the system-level parameter tuning which investigates the optimal configuration for system-level tuning paramter keeping the optimal configuration of the ATPs fixed found during the previous step. The search strategy is read from the configuration file. If no strategy us specified, the default individual search algorithm is selected on this step. The experiments are created for all possible ranges of the system-level tuning parameters. The plugin then evaluates the objective for the phase region followed by for each rts to compute the best system configuration respectively. The READEX tuning model is generated from this knowledge. 
+
+The last step is called as the verification step which is performed by executing additional three experiments in order to check for phase variations with the results produced in the previous step. For this purpose, PTF configures RRL with the best system configuration for phase region and with the rts-specific best configuration and switches configurations dynamically.
+ 
 \subsection{Inter-Phase Plugin} \label{sec:inter-phase}
