@@ -12,9 +12,11 @@
 % to display URLs in blue roman font according to Springer's eBook style:
 % \renewcommand\UrlFont{\color{blue}\rmfamily}
 
+\usepackage{todonotes}
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{mdframed}
+%\usepackage{todo}
  
 \begin{document}
 %
@@ -57,18 +59,28 @@ The abstract should briefly summarize the contents of the paper in
 
 
 \section{Introduction} \label{sec:introduction}
-\textbf{TUM (2 pages)} \\ \\
-\textcolor{blue}{1. Motivation for energy saving \\
-2. Challenges for exascale computing \\
-3. Introduction to the solution - READEX \\
-4. Score-P, PTF and RRL (short background) \\
-5. Introduce tuning parameters. Details about the frequencies and threads tuning parameters.  \\
-6. Introduce regions, rts's. Ignore interphase here. \\
-7. Different rts's have different best configurations. \\
-8. Say that this paper does not go into technical details, but aims to provide a general guide to interested users about what they can expect if they use READEX for energy tuning and the rational. }
+\textbf{TUM (2 pages)} \\ 
 
+The top 1 machine in the November 2018 version of the Top500 list is Summit at Oakridge National Laboratory. It consumes 9.8 MW with a peak performance of 200 PFlop/s. To reach the exascale level with this technology would already require 48 MW power. Therefore, energy reduction is a major goal for hardware, OS, runtime system, application, and tool developers. 
 
-test
+The European Horizon 2020 project READEX (Runtime Exploitation of Application Dynamism for Energy-efficient eXascale Computing) \footnote{www.readex.eu} funded from 2015-2018 developed the READEX Tool Suite for dynamic energy efficiency tuning of application. It semi-automatically tunes hybrid HPC applications by splitting the tuning into a Design-Time Analysis (DTA) and a Runtime Application Tuning phase (RAT). 
+
+Of major impact on the power consumption of the processor is the clock frequency. The Haswell processors \todo{reference} that are used in the target machine Taurus at ZIH of TU Dresden allow to set the core and  uncore frequency. The basic idea is to lower the core frequency and increase the uncore frequency for memory bound regions since the processor is anyway waiting for data from memory.  Another important tuning parameter is the number of parallel OMP threads in a node. If a routine is memory bound, it might be more energy efficient to use only so many threads until the memory bandwidth is saturated. 
+
+Following the scenario based tuning approach \cite{filippopoulos2013exploration} from the embedded world, the READEX Tool Suite creates an Application Tuning Model (ATM) at design-time which specifies optimal configurations of tuning parameters for individual program regions. This tuning model is then passed to RAT and is applied during production runs of the application by switching the tuning parameters to their optimal values when a tuned region is encountered. 
+
+This dynamic tuning approach of READEX allows to exploit dynamic changes in the application characteristics for energy tuning. Static approaches \todo{reference static approaches} only optimize the settings for the entire program run. READEX applies a much more fine granular approach. 
+
+The READEX Tool Suite even goes beyond tuning individual regions. It can distinguish different instances of regions, e.g., resulting from different call sites in the code. These instances, called runtime situations (rts), can have different optimal configurations in the ATM. 
+
+The READEX Tool Suite leverages well established tools. For instrumentation and monitoring of the application the Score-P system is used. The READEX Runtime Library (RRL) implements RAT and is a new plugin for Score-P~\cite{knupfer2012score}. The DTA is implemented via new tuning plugins of the Periscope Tuning Framework~\cite{PTF2.0IEEE2016}.  
+
+For reading energy measurements and for modifying core and uncore frequencies, several interfaces are supported. These are libmsrsave, libadapt, ad well as LIKWID~\cite{LIKWID}. Power measurements are based on the RAPL~\cite{Intel2018} counters or on special hardware, such as HDEEM~\cite{hdeem} on the Taurus machine in Dresden. If the target machine provides such special hardware new measurement plugins for Score-P have to be implemented. The availability of these interfaces is currently the major limitation for applying the READEX Tool Suite. Reading energy measurement as well as setting the frequencies requires root privileges and appropriate extensions to the kernel of the machine are required. 
+
+This paper focuses on the features of the READEX Tool Suite, the steps to be taken by the user in applying the tools, and motivates why certain aspects are more or less suited for different applications. The paper is neither a user's guide nor a technical documentation of the inner workings of the tools comprising the tool suite. 
+
+Section~\ref{sec:related-work} presents related available tools for energy management of HPC systems. Section~\ref{sec:methodology} introduces the major steps in using the READEX Tool Suites and presents Pathway \cite{Pathway:Petkov13}, a tool for automating tool workflows for HPC systems. Section~\ref{sec:dta} presents DTA as the first step in tuning applications. The reasoning behind the generation of the ATM at the end of DTA is given in Section~\ref{sec:tuning_model_generation}. Section~\ref{sec:tm-visualization} introduces a tool for the visual analysis of the generated ATM. RAT is presented in Section~\ref{rat} and the visualization of dynamic switching based on the given ATM in Vampir is introduced in Section~\ref{fig:switch_visualization}. Extensions of the READEX Tool Suite are presented in Section~\ref{sec:extensions} and results from several application on different machines are summarized in Section~\ref{sec:results}. Finally the paper draws some conclusions. 
+
 
 \input{related_work.tex}
 \input{readex_methodology.tex}
@@ -97,5 +109,6 @@ test
 % References will then be sorted and formatted in the correct style.
  \bibliographystyle{splncs04}
  \bibliography{Tools_Workshop2018}
+ \bibliography{References}
 
 \end{document}
