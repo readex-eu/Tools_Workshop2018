@@ -17,7 +17,10 @@
 \usepackage{listings}
 \usepackage{mdframed}
 %\usepackage{todo}
- 
+
+\usepackage{array}
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
+
 \begin{document}
 %
 \title{Saving Energy Using the READEX Methodology \thanks{The research leading to these results has received funding from the European Union's Horizon 2020 Programme under grant agreement number 671657.}}
@@ -29,7 +32,8 @@
 \author{Madhura Kumaraswamy \and Anamika Chowdhury \and Michael Gerndt \inst{1} \and
 Second Author\inst{2} \and
 Nico Reissmann \inst{2} \and Per Gunnar Kjeldsberg \inst{2} \and
-Third Author\inst{3}}
+Ondrej Vysocky \inst{3} \and Jan Zapletal \inst{3} \and Lubomir Riha \inst{3}
+\and Third Author\inst{4}}
 %
 \authorrunning{Kumaraswamy, M et al.}
 % First names are abbreviated in the running head.
@@ -39,6 +43,8 @@ Third Author\inst{3}}
 \email{\{kumarasw,chowdhua,gerndt\}@in.tum.de}\\ \and
 Norwegian University of Science and Technology, NTNU, Trondheim, Norway 
 \email{pgk@ntnu.no} \\ \and 
+IT4Innovations national supercomputing center, V\v{S}B -- Technical University of~Ostrava, Ostrava, Czech Republic
+\email{lubomir.riha@vsb.cz} \\ \and 
 ABC Institute \email{@} \\ \and }
 
 \maketitle              % typeset the header of the contribution
