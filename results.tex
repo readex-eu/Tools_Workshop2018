@@ -1,15 +1,135 @@
 \section{Results} \label{sec:results}
-\textbf{IT4I (3 pages)}
-\textcolor{blue}{\begin{enumerate}
-	\item Description of the machine/modules
-	\item Rational behind selecting application classes, i.e., benchmarks, proxy apps, applications
-	\item Brief description of the dynamism in the selected applications
-	\item Add the results that were presented at the review meeting. Focus on the table presenting the overall results and not specifically to a single application. 
-	\item Do not compare to the project goals but present the achievements. e.g. min, max, avg compared to manual tuning. 
-	\begin{itemize}
-		\item A table summarizing the savings - improvements
-		\item Should add inter-phase results to this - TUM
-		\item Describe the overall effect of using the READEX methodology
-	\end{itemize}
-	\item Results for ATPs
-\end{enumerate}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\textbf{IT4I (3 pages)}
+%\textcolor{blue}{\begin{enumerate}
+%	\item Description of the machine/modules
+%	\item Rational behind selecting application classes, i.e., benchmarks, proxy apps, applications
+%	\item Brief description of the dynamism in the selected applications
+%	\item Add the results that were presented at the review meeting. Focus on the table presenting the overall results and not specifically to a single application. 
+%	\item Do not compare to the project goals but present the achievements. e.g. min, max, avg compared to manual tuning. 
+%	\begin{itemize}
+%		\item A table summarizing the savings - improvements
+%		\item Should add inter-phase results to this - TUM
+%		\item Describe the overall effect of using the READEX methodology
+%	\end{itemize}
+%	\item Results for ATPs
+%\end{enumerate}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Description of the machine/modules}
+To demonstrate that READEX is capable of supporting different architectures and software stacks, we test it on the Intel Haswell and Intel Broadwell processors both at TU Dresden's Top500 cluster Taurus. Taurus' Haswell (two Xeon E5-2680 v3 on a single node, 12 cores each) partition has been selected especially due to reliable power measurement infrastructure called HDEEM~\cite{hdeem} that was used for energy measurement in this project. For energy measurements on Broadwell (two Xeon E5-2680 v4, 14 cores each) partition we used Intel RAPL counters with 75\,W baseline~\footnote{The Broadwell's baseline has been established based on low frequency measurements from IPMI.} to measure not only the CPUs but the energy consumption of the whole node as well as in case of HDEEM.
+
+%Another site where we did the tests is Haswell (two Xeon E5-2680 v3 on single node, 12 cores each) based cluster Salomon operated by IT4Innovations national supercomputing center, in this case the Intel RAPL counters had been used for energy measurement. Taurus as well as Salomon system are listed in the Top500 list most power-full supercomputers.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Rational behind selecting application classes, i.e., benchmarks, proxy apps, applications}
+Following text presents the energy savings that have been achieved when using READEX tools. The list of the application is based on READEX test apps, it consists of three basic benchmarks, Kripke, Lulesh and Blasbench, that had been selected to show and test the tools functionality. Rest of the suite are fully-fledged applications. Since BEM4I and ESPRESO results are presented into further details, it should be briefly introduced. 
+
+BEM4I~\cite{ch6_MerZap2013} is a solver for partial differential equations based on the boundary element method and is under development at IT4Innovations. Contrary to finite element solvers, BEM4I produces dense matrices and due to the nature of boundary integral equations the assembly of system matrices is more or less compute bound. This is in contrast to the iterative solver used for the solution of the resulting system of linear equations which is usually memory bound due to matrix vector multiplications. BEM4I is thus a suitable library to be involved in the test apps repository.
+
+The ESPRESO library~\cite{ESPRESOijhpca} is a combination of Finite Element (FEM) and Boundary Element (BEM) tools and TFETI/HTFETI solvers. It supports FEM and BEM (uses BEM4I library) discretization for Advection-diffusion equation, Sto\-kes flow and Structural mechanics. The ESPRESO solver is a parallel linear solver, which includes a highly efficient MPI communication layer designed for massively parallel machines with thousands of compute nodes. The parallelization inside a node is done using OpenMP.
+
+
+\subsection{Add the results that were presented at the review meeting. Focus on the table presenting the overall results and not specifically to a single application. Do not compare to the project goals but present the achievements. e.g. min, max, avg compared to manual tuning.}
+
+Table~\ref{tab:overall2} shows how the runtime and energy consumption changed, when the READEX toolsuite was applied to tune the selected applications. Achieved energy savings varies between 4.3\,\% and 34\,\%. 
+
+\begin{table}[h]
+    \centering
+%	\resizebox{\textwidth}{!}
+%	{%
+
+    \begin{tabular}{|c|c|cH|}
+    \hline
+            &       Broadwell &         Haswell &         IT4I HSW \\
+            &     energy/time &     energy/time &      energy/time \\ \hline
+AMG2013	    &   7.5\%/-10.5\% &   7.0\%/-14.0\% &   3.4\%/-23.2\%  \\ \hline
+Blasbench   &  12.0\%/-19.0\% &   9.9\%/ -9.2\% &  10.9\%/-19.8\%  \\ \hline
+Kripke	    &   4.3\%/-10.3\% &  10.5\%/-28.9\% &  10.3\%/-22.2\%  \\ \hline
+Lulesh	    &  10.0\%/ -9.2\% &  18.2\%/-25.7\% &   7.3\%/-20.6\%  \\ \hline
+BEM4I	    &  23.0\%/ -1.1\% &  34.0\%/ 10.9\% &  24.3\%/  8.2\%  \\ \hline
+INDEED	    &  14.0\%/-18.0\% &  19.1\%/-17.3\% &             -    \\ \hline
+NPB3.3-BT-MZ&   8.9\%/-11.3\% &  10.8\%/-12.0\% &   3.1\%/ -2.8\%  \\ \hline
+ESPRESO	    &           -     &   7.1\%/-12.3\% &   8.1\%/ -7.0\%  \\ \hline
+OpenFOAM    &   7.5\%/ -7.6\% &   9.8\%/ -9.8\% &  18.4\%/ -7.5\%  \\ \hline
+    \end{tabular}
+
+%	}
+    \caption{Overall time and energy saving that has been achieved when READEX tools has been applied on the applications, comparing the results on Broadwell and Haswell platforms.}
+    \label{tab:overall2}
+\end{table}
+
+
+The BEM4I library shows the best energy savings from the evaluated applications, and in case of the evaluation at Haswell nodes the tuned runs were also shorter than the runs without tuning.
+
+
+\subsection{Brief description of the dynamism in the selected applications}
+Partial Differential Equations (PDEs) are often used to describe phenomena such as sheet metal forming, fluid flow, and climate modeling. One of the numerical approaches to solving PDEs is the boundary element method (BEM) implemented, e.g., in the BEM4I library. In contrast to volume based methods, such as the finite element/differences/volume methods, BEM gives dense matrices whose assembly results in a compute bound code. This fact is even more pronounced when the assembly kernels are parallelized and vectorized as in the case of BEM4I~\cite{ch6_ZapMerMal2016,ch6_MerZapJar2016}. On the other hand, the iterative GMRES solver based on the matrix-vector product as implemented in the Intel Math Kernel Library (MKL) is much less compute intensive and results in memory bound computation. Furthermore, printing the results for visualization leads to an I/O bound region. 
+
+For the memory bound solver (GMRES) the manual tuning results in a low core frequency, high uncore frequency and use of eight threads to overcome non-uniform memory access (NUMA) effects of the dual socket computational node. While static savings reach 15.7~\%, the dynamic switching among individual configurations increases the savings to 34.0~\% at the Haswell nodes. Decrease in runtime in this case is caused by NUMA effects of the MKL solver -- the tuned version runs on eight threads and due to the compact affinity all threads run on a single socket.
+The energy and time consumption of each region in the application in optimum static and optimum dynamic (optimum configuration for the region itself) configuration is presented in Table~\ref{tab:BEM4Idynamicity2}, from which we can see that the optimum static configuration has very bad impact on assemble\_k and assemble\_v regions, also behavior or the region print\_vtu is suboptimal.
+
+%\begin{table}[h]
+%    \centering
+%    \begin{tabular}{|c|c|c|c|c|c|}
+%    \hline
+%Compute node energy &	assemble\_k & assemble\_v & gmres\_solve & print\_vtu & main  \\ \hline
+%default energy  	&	1467\,J &	1484\,J &	2733\,J &	1142\,J &	6872\,J \\ \hline
+%static tuning energy&	1962\,J &	2015\,J &	1366\,J &	 420\,J &	5792\,J \\ \hline
+%dynamic tuning energy&	1476\,J &	1462\,J &	1259\,J &	 293\,J &	4531\,J \\ \hline
+% \hline
+%\textbf{static savings}  	&	-33.8\%	& -35.8\% & 50.0\% & 63.2\% & 15.7\% \\ \hline
+%\textbf{dynamic savings} 	&	-0.6\%	&   1.5\% & 53.9\% & 74.3\% & 34.0\% \\ \hline
+%    \end{tabular}
+%    \caption{Comparison of the BEM4I regions energy consumption in the application default, optimal static and dynamic configurations.}
+%    \label{tab:BEM4Idynamicity}
+%\end{table}
+
+\begin{table}[h]
+    \centering
+	\resizebox{\textwidth}{!}
+	{%
+		\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+			 &	assemble\_k & assemble\_v & gmres\_solve & print\_vtu & main \\ 
+			 & [J]/[s]     & [J]/[s]    & [J]/[s]     & [J]/[s]   & [J]/[s] \\ \hline
+		default setings	&	1467/5.4 &	1484/ 5.9 &	2733/10.2 &	1142/5.6 &	6872/27.3 \\ \hline
+		static tuning	&	1962/9.8 &	2015/10.6 &	1366/ 6.1 &	 420/2.4 &	5792/29.0 \\ \hline
+		dynamic tuning	&	1476/7.0 &	1462/ 7.2 &	1259/ 7.9 &	 293/2.1 &	4531/24.3 \\ \hline
+		 \hline
+		static savings [\%]  & -33.8/-82.3	& -35.8/-79.1 & 50.0/40.5 & 63.2/56.8 & 15.7/-6.2 \\ \hline
+		dynamic savings [\%]	&  -0.6/-30.6	&   1.5/-20.9 & 53.9/23.2 & 74.3/62.9 & 34.0/10.9 \\ \hline
+		\end{tabular}
+	}
+    \caption{Comparison of the BEM4I regions time and energy consumption in the application default, optimal static and dynamic configurations.}
+    \label{tab:BEM4Idynamicity2}
+\end{table}
+
+
+
+\subsection{Application Parameters tuning}
+As mentioned in the previous sections READEX comes with two approaches to tune application parameters: (1) using the ATP library and (2) using Application Configuration Parameters (ACP). The integration of the ATP library requires developer knowledge of the application and therefore, we implemented this support into the ESPRESO library, that is developed by one of the partners (IT4Innovations) in the READEX project.
+
+There is a long list of application parameters that were evaluated: runtime tuning of FETI METHOD (2 options), PRECONDITIONERS (5 opts.), ITERATIVE SOLVERS (2 opts.), HFETI type (2 opts), SCALING (2 opts), BO\_TYPE (2 opts), NON-UNIFORM PARTS (6 opts), REDUNDANT LAGRANGE (2 opts.) and adaptive precision (2 opts.). For runtime tuning of domain decomposition (10 opts.) a developer had to implement the support for this parameter, since ESPRESO performs domain decomposition only during startup. For the READEX project, we developed enhanced ESPRESO to redo the decomposition after each time-step of a transient simulation. Total number of possible combinations is 3840.
+
+There is no default configuration in ESPRESO. Based on the problem that is being solved, a user has to setup the FETI solver in ESPRESO based on his knowledge of the problem he wants to solve, so we cannot present savings against default configuration, just compare the consumption in the best and the worst case. The worst case scenario took 1320 seconds and consumed about 230 kJ, on the other hand the best case scenario consumed 32.5 kJ in 189 seconds. Comparing these two cases gives us 86\% energy savings. If user would specify some reasonable settings, the energy consumption might be about 50-66\% higher than in the best possible settings.
+
+Besides the ESPRESO library we have analyzed another three libraries using ATP or ACP, the results in energy savings are presented in Table~\ref{tab:ATPACP}.
+
+\begin{table}[h]
+    \centering
+
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+Application & \# parameters tested /& Energy savings     & Energy savings \\
+            & total \# of options      & vs. worst settings & vs. default* settings\\
+\hline
+ESPRESO     & 9/3840 & 86\% & 50--66\% \\ \hline
+ELMER       & 1/40   & 97\% & 50--75\% \\ \hline
+OpenFOAM    & 2/12   & 24\% &      8\% \\ \hline
+INDEED      & 3/12   & 35\% &     25\% \\ \hline
+
+    \end{tabular}
+    \caption{Table of application that has been evaluated with READEX ATP/ACP, shows the difference in energy consumption in optimal settings compare to worst settings and default one. *If default settings is not available, the values refer to any reasonable settings.}
+    \label{tab:ATPACP}
+\end{table}
