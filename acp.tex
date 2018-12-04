@@ -5,3 +5,9 @@
 1. Motivation \\
 2. How do they work (plugin description)
 }
+
+On request of the application groups in READEX, a new tuning plugin was added enabling tuning of Application Configuration Parameters (ACP). These tuning parameters are part of the  application input and have to be set before application execution. Tuning ACPs is implemented by a separate PTF tuning plugin.
+
+The \texttt{readex\_configuration} tuning plugin enables tuning of ACPs with respect to one of the objectives supported by READEX. The plugin first reads a plugin specific configuration file. This specifies the objective, the search algorithms, and the tuning parameters. ACPs are identified by their name in the input file. For each such input file a template file with the name is given. During the search for the optimal configuration for the ACPs, the plugin copies the template file to the input file and replaces all ACP names with the value given in the selected configuration. It then restarts the application and measures the resulting objective value for the phase region. Only a single phase is required, but also a burst of phases can be used in the experiment. The READEX User's Guide in the appendix provides details of this procedure. 
+
+The final outcome of this tuning plugin is an optimal configuration for the ACPs which is output into a file. Furthermore, final input files are created from the template files by replacing ACPs by their value in the best configuration.  
