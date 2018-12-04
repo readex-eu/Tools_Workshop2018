@@ -67,10 +67,11 @@ Several ATPs can be defined in the same code. They may be independent or not. In
 notion of constraints between the parameters. To indicate to READEX that parameters have constraints between them, 
 these parameters are put in the same \texttt{domain\_name}.
 
-The Listing \ref{lbl:atp_example} shows an example of manual annotation of some generic functions. The example shows how 
+The Listing~\ref{lbl:atp_example} shows an example of manual annotation of some generic functions. The example shows how 
 the parameter is transfered from the tuning system through the function \texttt{ATP\_PARAM\_GET} and how the constraints are 
 defined through the function \texttt{ATP\_CONSTRAINT\_DECLARE}.
 
+\vspace{0.4cm}
 \begin{minipage}{\linewidth}
 \begin{multicols}{2}[\captionof{lstlisting}{ATP constraint and exploration declaration with the ATP library}]
 \begin{lstlisting}[language=C,numbers=left,numberstyle=\tiny,xleftmargin=3em,frame=none,title=\phantom{xxx},label=lbl:atp_example]
@@ -117,6 +118,7 @@ void bar(){
 \end{multicols}
 \end{minipage}
 \vspace{0.4cm}
+
 Once the source code is annotated and the compiled code is executed, the ATP library generates a description file in which 
 ATPs are written. This file contains the details about the declared application parameters.
 
