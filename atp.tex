@@ -29,52 +29,48 @@ The steps to handle the ATPs can be condensed in the Fig. \ref{fig_ATP_workflow}
 
 In details, the application developer exposes control variable and mark them as ATPs with the API functions. These functions are listed in the Listing \ref{lbl:atp_declare}.
 
-\lstset{language=C,
-	basicstyle=\ttfamily\scriptsize,
-	frame=tb,
-	aboveskip=2mm,
-	belowskip=2mm,
-	showstringspaces=false,
-	columns=flexible,
-	breaklines=true,
-	breakatwhitespace=true,
-	keywordstyle=\color{black},
-	commentstyle=\color{black},
-	escapeinside={(@*}{*@)},
-}
-\vspace{0.4cm}
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[caption={ATP library API functions}, label={lbl:atp_declare}]
-ATP_PARAM_DECLARE(const char *param_name, const char param_type, int default_value, const char *domain_name)
-ATP_PARAM_ADD_VALUES(const char *param_name, void *vArray, int array_size, const char *domain_name)
----------------------------------------------------------------------------
-ATP_PARAM_GET(const char *param_name, void *atp_address, const char *domain_name)
----------------------------------------------------------------------------
-ATP_CONSTRAINT_DECLARE(const char *constraint_name, const char *constraint_expr, const char *domain_name)
-ATP_EXPLORATION_DECLARE(const char *explorations_list, const char *domain_name)
-\end{lstlisting}
-\end{minipage}
+%\vspace{0.4cm}
+%\begin{minipage}{\linewidth}
+%\begin{lstlisting}[caption={ATP library API functions}, label={lbl:atp_declare}]
+%ATP_PARAM_DECLARE(const char *param_name, const char param_type, int default_value, const char *domain_name)
+%ATP_PARAM_ADD_VALUES(const char *param_name, void *vArray, int array_size, const char *domain_name)
+%---------------------------------------------------------------------------
+%ATP_PARAM_GET(const char *param_name, void *atp_address, const char *domain_name)
+%---------------------------------------------------------------------------
+%ATP_CONSTRAINT_DECLARE(const char *constraint_name, const char *constraint_expr, const char *domain_name)
+%ATP_EXPLORATION_DECLARE(const char *explorations_list, const char *domain_name)
+%\end{lstlisting}
+%\end{minipage}
 
-At the moment, the ATPs library handles only integers. In case the developer wants to use another variable 
-type as ATPs, he is invited to map the space of non integer type values to integers.
+At the moment, the ATP library handles only integers. If the required ATP has another variable type, the user must map the space of non-integer type values to integers.
 
-The function \texttt{ATP\_PARAM\_DECLARE} declares the parameter's name, type, default value and domain.
+The function \texttt{ATP\_PARAM\_DECLARE} declares the parameter's name, type, default value and domain. The function \texttt{ATP\_PARAM\_ADD\_VALUES} allows to add possible values the parameter can take, in a range specified by minimal, maximal and increment values ; or by enumerating explicitly the possible values.
 
-The function \texttt{ATP\_PARAM\_ADD\_VALUES} allows to add possible values the parameter can take, in a range specified by 
-minimal, maximal and increment values ; or by enumerating explicitly the possible values.
+Several ATPs can be defined in the same code. They may be independent or not. In the latter case, there is a notion of constraints between the parameters. To indicate to READEX that parameters have constraints between them, these parameters are put in the same \texttt{domain\_name}.
 
-Several ATPs can be defined in the same code. They may be independent or not. In the later case, there is a 
-notion of constraints between the parameters. To indicate to READEX that parameters have constraints between them, 
-these parameters are put in the same \texttt{domain\_name}.
-
-The Listing~\ref{lbl:atp_example} shows an example of manual annotation of some generic functions. The example shows how 
-the parameter is transfered from the tuning system through the function \texttt{ATP\_PARAM\_GET} and how the constraints are 
+Listing~\ref{lbl:atp_example} shows an example of manual annotation of some generic functions. The example shows how the parameter is transfered from the tuning system through the function \texttt{ATP\_PARAM\_GET} and how the constraints are 
 defined through the function \texttt{ATP\_CONSTRAINT\_DECLARE}.
-
-\vspace{0.4cm}
-\begin{minipage}{\linewidth}
-\begin{multicols}{2}[\captionof{lstlisting}{ATP constraint and exploration declaration with the ATP library}]
-\begin{lstlisting}[language=C,numbers=left,numberstyle=\tiny,xleftmargin=3em,frame=none,title=\phantom{xxx},label=lbl:atp_example]
+	\definecolor{mygray}{rgb}{0.46,0.46,0.46}
+	\lstset{language=[90]Fortran,
+		%	basicstyle=\ttfamily,
+		frame=lines,
+		xleftmargin=\parindent,
+		aboveskip=2mm,
+		belowskip=2mm,
+		showstringspaces=false,
+		columns=flexible,
+		breaklines=true,
+		breakatwhitespace=true,
+		keywordstyle=\color{blue},
+		commentstyle=\color{mygray},
+		numbers=left,
+		numberstyle=\tiny\color{mygray},
+		numbersep=1em,
+		escapeinside={(@*}{*@)},
+	}
+\todo{somehow, the listing has no number. why?}
+\begin{multicols}{2}[\captionof{lstlisting}{ATP constraint and exploration declaration with the ATP library.}] \label{lbl:atp_example}
+\begin{lstlisting}[language=C,xleftmargin=3em,frame=none,title=\phantom{xxx}]
 void foo(){
   int atp_cv;
   ...
@@ -82,20 +78,20 @@ void foo(){
   int32_t solver_values[3] = {1,5,1};
   ATP_ADD_VALUES("solver", solver_values, 3, "DOM1");
   ATP_PARAM_GET("solver", &atp_cv, "DOM1");
-
+	
   switch (atp_cv){
-    case 1:
-        // choose solver 1
-        break;
-    case 2:
-        // choose solver 2
-        break;
+  case 1:
+    // choose solver 1
+    break;
+  case 2:
+    // choose solver 2
+    break;
     ...
   }
   int32_t hint_array = {GENETIC, RANDOM};
   ATP_EXPLORATION_DECLARE(hint_array, "DOM1");
 }
-
+	
 void bar(){
   int atp_ms;
   ...
@@ -105,30 +101,23 @@ void bar(){
   ATP_PARAM_GET("mesh", &atp_ms, "DOM1");
   ATP_CONSTRAINT_DECLARE("const1", "(solver = 1 && 0 <= mesh <= 40) || (solver = 2 && 40 <= mesh <= 80) || (solver > 2 && mesh = 120)", "DOM1");
   if((atp_ms > 1) && (atp_ms <= 40)){
-      // choose mesh size 1
+    // choose mesh size 1
   }
   if((atp_ms > 40) && (atp_ms <= 80)){
-      // choose mesh size 2
+    // choose mesh size 2
   }
   if(atp_ms == 120){
-      // choose mesh size 3
+    // choose mesh size 3
   }
 }
 \end{lstlisting}
 \end{multicols}
-\end{minipage}
-\vspace{0.4cm}
 
-Once the source code is annotated and the compiled code is executed, the ATP library generates a description file in which 
-ATPs are written. This file contains the details about the declared application parameters.
+Once the source code is annotated and the compiled code is executed, the ATP library generates a description file in which the ATPs are written. This file contains the details about the declared application parameters.
 
-During the DTA, the PTF launches the ATP server that reads the ATP description file. The ATP server's task is to respond to 
-PTF requests, such as providing the list of ATPs or a list of valid values of ATPs. The READEX Tuning Plugin uses the list 
-of valid values to generate a search space of the tuning parameters (not only the ATPs) and explore it. A Tuning Model is 
-generated as explained in the section \ref{tm-generation}.
+During DTA, PTF launches the ATP server that reads the ATP description file. The ATP server's task is to respond to PTF requests, such as providing the list of ATPs or a list of valid values of ATPs. The \textit{readex\_intraphase} tuning plugin uses the list of valid values to generate a search space of the tuning parameters (not only the ATPs) and explore it. The resulting tuning model also consists of the best combination of the ATPs.
 
-The READEX Runtime Library uses the ATP library during the production run to apply the best configuration as described in the 
-section \ref{rat}. 
+The RRL uses the ATP library during the production run to apply the best configuration. 
 
 
 %	Explain that ATPs are combined to domains and those in a domain can have constraints. 
