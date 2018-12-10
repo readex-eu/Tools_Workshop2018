@@ -23,14 +23,12 @@ To demonstrate that READEX is capable of supporting different architectures and 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Rational behind selecting application classes, i.e., benchmarks, proxy apps, applications}
-Following text presents the energy savings that have been achieved when using READEX tools. The list of the application is based on READEX test apps, it consists of three basic benchmarks, Kripke, Lulesh and Blasbench, that had been selected to show and test the tools functionality. Rest of the suite are fully-fledged applications. Since BEM4I and ESPRESO results are presented into further details, it should be briefly introduced. 
+
+The following text presents the energy savings that have been achieved when using READEX tools. The list of the application is based on READEX test apps, it consists of three basic benchmarks, Kripke, Lulesh and Blasbench, that had been selected to show and test the tools functionality. Rest of the suite are fully-fledged applications. Since BEM4I and ESPRESO results are presented into further details, it should be briefly introduced. 
 
 BEM4I~\cite{ch6_MerZap2013} is a solver for partial differential equations based on the boundary element method and is under development at IT4Innovations. Contrary to finite element solvers, BEM4I produces dense matrices and due to the nature of boundary integral equations the assembly of system matrices is more or less compute bound. This is in contrast to the iterative solver used for the solution of the resulting system of linear equations which is usually memory bound due to matrix vector multiplications. BEM4I is thus a suitable library to be involved in the test apps repository.
 
 The ESPRESO library~\cite{ESPRESOijhpca} is a combination of Finite Element (FEM) and Boundary Element (BEM) tools and TFETI/HTFETI solvers. It supports FEM and BEM (uses BEM4I library) discretization for Advection-diffusion equation, Sto\-kes flow and Structural mechanics. The ESPRESO solver is a parallel linear solver, which includes a highly efficient MPI communication layer designed for massively parallel machines with thousands of compute nodes. The parallelization inside a node is done using OpenMP.
-
-
-\subsection{Add the results that were presented at the review meeting. Focus on the table presenting the overall results and not specifically to a single application. Do not compare to the project goals but present the achievements. e.g. min, max, avg compared to manual tuning.}
 
 Table~\ref{tab:overall2} shows how the runtime and energy consumption changed, when the READEX toolsuite was applied to tune the selected applications. Achieved energy savings varies between 4.3\,\% and 34\,\%. 
 
