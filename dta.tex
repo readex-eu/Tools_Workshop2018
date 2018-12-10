@@ -22,24 +22,18 @@ The \textbf{readex\_intraphase} plugin is executed in four tuning steps: default
 
 During this step, PTF executes the plugin with the default configuration of the tuning parameter to collect the program's static information after starting the application. The default settings are provided by the batch system for the system parameter and the ATP specification in the code for ATPs. PTF uses a specific analysis strategy to gather program regions and runtime situations only for the first phase of the application. The measurement results are required to evaluate the objective value, for example, time and energy and stored to compare with the results of the verification step.
 
-\subsubsection{ATP Tuning} \label{atp-tuning} 
-The next step is to tune ATPs as they are specifically independent of the system-level tuning parameter. The application expert can provide such kind of application specific parameters for example algorithmic choices. The detail about ATP is described in section ~\ref{sec:atp}. 
-
-The plugin provides two new search strategies, \textbf{exhaustive\_atp} and \textbf{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
-
-The \textbf{exhaustive\_atp} search space is built from the crossproduct of all valid combinations of ATPs. The plugin contacts to the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set   is then built from the cross products of the computed valid points. 
-
-On the other hand, the \textbf{individual\_atp} stratgey is computed from the domains individually instead of the crossproduct of the valid points of the domains. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains were explored. The search strategy then used \textbf{exhaustive\_atp} to explore the valid points of a domain. 
-
 \subsubsection{System Parameter Tuning} \label{sys-tuning} 
+
 The system-level parameter tuning investigates the optimal configuration for system-level tuning paramter keeping the optimal configuration of the ATPs fixed found during the previous step. The search strategy is read from the configuration file. Exhaustive search leads to the biggest number of configurations that are tested in subsequent program phases. The individual strategy reduces the number significantly since it is not the cross product of all tuning parameters. For this search strategy the tuning parameters are optimized independently. With the random strategy, the number of experiments can be specified. If no strategy is specified, the default individual search algorithm is selected on this step. The experiments are created for all possible ranges of the system-level tuning parameters. The plugin evaluates the objective for the phase region followed by for each rts to compute the best system configuration respectively. The READEX tuning model is generated from this knowledge. 
 
 \subsubsection{Verification} \label{intra-verification} 
+
 The verification step is performed by executing additional three experiments in order to check for phase variations with the results produced in the previous step. For this purpose, PTF configures RRL with the best system configuration for phase region and with the rts-specific best configuration. RRL switches system configurations dynamically for the rts's. 
 
 Finally, the plugin determines the static and dynamic savings for the rts's ans static savings for the whole phase to evaluate the tuning result and then a tuning model is precomputed. Additionally, the generated tuning model for differents inputs of an application can be merged into one general tuning model by an external \textbf{Tuning Model Merger} tool. The detail about this tool is explained in section~\ref{sec:input}.
 
 \subsection{Computation of Savings} \label{sec:com-savings}
+
 The plugin computes the following three values to characterize the savings at the end of the execution:
 \begin{enumerate}
 	\item Static savings for the rts's: The total improvement in the objective value with the static best configuration of the rts’s over the default configuration. 

@@ -1,17 +1,4 @@
 \section{State of the art} \label{sec:related-work}
-\textbf{TUM, 1 page} 
-
-\textcolor{blue}{
-\begin{enumerate}
-  \item Background and related work.
-  \item Tuning DVFS well explored. 
-  \item In general difficult due to permissions to read energy measurements and set frequencies, different interfaces, and lack of measurement hardware
-  \item Tools available in practice? Energy aware scheduling at LRZ. Anything else?
-  \item READEX based on ScoreP and Periscope, interfacing msrsave, libadapt, likwid
-  \item READEX provides dynamic tuning in addition to static tuning
-\end{enumerate}
-}
-
 As energy-efficiency and consumption have now become one of the biggest challenges in HPC, research in this direction has gained momentum. Currently, there are many approaches that employ DVFS in
 HPC to tune different objectives. Rojek et al.~\cite{Rojek} used DVFS to reduce the energy consumption for stencil computations whose execution time is predefined. The algorithm first collects the execution time and energy for a subset of the processor frequencies, and dynamically models the execution time and the average energy consumption as functions of the operational frequency. It then adjusts the frequency so that the predefined execution time is respected.
 

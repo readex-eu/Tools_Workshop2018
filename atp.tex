@@ -119,6 +119,17 @@ During DTA, PTF launches the ATP server that reads the ATP description file. The
 
 The RRL uses the ATP library during the production run to apply the best configuration. 
 
+\subsubsection{ATP Tuning} \label{atp-tuning} 
+The next step is to tune ATPs as they are specifically independent of the system-level tuning parameter. The application expert can provide such kind of application specific parameters for example algorithmic choices. The detail about ATP is described in section ~\ref{sec:atp}. 
+
+The plugin provides two new search strategies, \textbf{exhaustive\_atp} and \textbf{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
+
+The \textbf{exhaustive\_atp} search space is built from the crossproduct of all valid combinations of ATPs. The plugin contacts to the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set   is then built from the cross products of the computed valid points. 
+
+On the other hand, the \textbf{individual\_atp} stratgey is computed from the domains individually instead of the crossproduct of the valid points of the domains. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains were explored. The search strategy then used \textbf{exhaustive\_atp} to explore the valid points of a domain. 
+
+
+
 
 %	Explain that ATPs are combined to domains and those in a domain can have constraints. 
 %		Manual insertion into code (ATP library). Can use runtime info to set e.g. the value space of an ATP.
