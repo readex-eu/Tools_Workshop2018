@@ -98,7 +98,12 @@ Section~\ref{sec:related-work} presents related available tools for energy manag
 
 
 \section{Conclusions} \label{sec:conclusions}
-\textbf{0,5 page}
+
+The READEX project developed a tool suite for dynamic tuning of the energy efficiency of HPC applications. It pre-computes during design-time a tuning model that is then passed to the runtime for switching system configurations when certain regions start. This dynamic approach allows to specifically tune the configuration for individual runtime situations and thus to exploit the variation in the application characteristics during execution for energy reduction. 
+
+READEX is based on established tools, i.e., Score-P for instrumentation, monitoring, and runtime tuning actions, and PTF for design-time analysis. In contrast to other tools, DTA is carried out in a single application run since it evaluates potential candidate configuration in single phases. As part of READEX, a novel plugin interface for Score-P was implemented that allows to add new functionality to the monitor in a transparent way. The RRL is the first demonstrator of this powerful extension mechanism.
+
+The results obtained from tuning system, runtime, and application parameters for a wide range of benchmarks, proxy apps, and real applications were outlined in this paper as well. The results of dynamic tuning are clearly application dependent but demonstrate the significant potential of the READEX methodology.
 
 
 
