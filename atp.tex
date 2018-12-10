@@ -1,55 +1,26 @@
 \subsection{Application Tuning Parameters} \label{sec:atp}
-\textbf{Intel (1 page)}
-\textcolor{blue}{\begin{enumerate}
-	\item Motivation
-	\item How does this work? (A high level workflow, maybe?)
-	\item Explain that ATPs are combined to domains and those in a domain can have constraints. 
-	\begin{itemize}
-		\item Manual insertion into code (ATP library). Can use runtime info to set e.g. the value space of an ATP.
-		\item Pre DTA: Generation of ATP file
-		\item During DTA: ATP server providing valid settings for ATPs based on the value space and the constraints.
-		\item During RAT: Read by ATP library from the RRL
-	\end{itemize}
-\end{enumerate}}
 
-The applications running on a cluster are aimed to solve numerical problems. Usually, the solutions can be computed with different methods. Among them there is numerical integration (Simpson, Gaussian Quadrature, Newton-Cotes, ...), function minimization (Gradient Descent, Conjugate Gradient Descent, Newton, ...) or finding the eigenvalues and eigenvectors of real matrices (power method, inverse power method, Arnoldi, ...). These methods may have different implementations, like the Fast Fourier Transform (algorithms from Cooley-Tukey, Bruun, Rader, Bluestein) implemented in the FFTW, FFTS, FFTPACK or MKL.
+<applications running on a cluster are aimed to solve numerical problems. Usually, the solutions can be computed with different methods. Among them there is numerical integration (Simpson, Gaussian Quadrature, Newton-Cotes, ...), function minimization (Gradient Descent, Conjugate Gradient Descent, Newton, ...) or finding the eigenvalues and eigenvectors of real matrices (power method, inverse power method, Arnoldi, ...). These methods may have different implementations, like the Fast Fourier Transform (algorithms from Cooley-Tukey, Bruun, Rader, Bluestein) implemented in the FFTW, FFTS, FFTPACK or MKL.
 
-For a given problem, several method can provide similar numerical solution through different implementations. In HPC, the developer can chose the most efficient in term of numerical accuracy and time to solution. However, this later also depends on the computer's architecture. For example some methods can be more efficient on a vector processor than on a superscalar processor. It is up to the application's developer to chose the appropriate method and its implementation that fulfill the computer's specificity.
+For a given problem, several methods can provide similar numerical solution through different implementations. In HPC, the developer chooses the most efficient in term of numerical accuracy and time to solution. However, this later also depends on the computer's architecture. For example some methods can be more efficient on a vector processor than on a superscalar processor. It is up to the application's developer to chose the appropriate method and its implementation that fulfill the computer's specificity.
 
-In the context of the energy saving, the energy consumption must also be minimized. It makes it hard for the developer to chose which method and implementation must be executed. The READEX framework let the possibility to the developer to expose the various methods and their implementation as Application Tuning Parameters. In order to pass these parameters to the tuning system, READEX provides an API to annotate the source code at locations where the tuning parameters play a role.
+
+In the context of the energy saving, the energy consumption must also be minimized. It makes it hard for the developer to choose which method and implementation must be executed. READEX offers the developer to expose the various methods and their implementation via Application Tuning Parameters (ATP) to the tuning process. ATPs are communicated to READEX through an API used to annotate the source code at locations where the tuning parameters play a role.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.8\columnwidth]{figures/overall_design.pdf} 
-\caption{Workflow }
+\caption{Workflow handling ATPs in READEX. }
 \label{fig_ATP_workflow}
 \end{figure} 
 
-The steps to handle the ATPs can be condensed in the Fig. \ref{fig_ATP_workflow}.
+Figure~\ref{fig_ATP_workflow} illustrates the step in tuning ATPs. First, ATPs are declared in the code through annotations. The application is then linked agains the ATPlibrary implementing the annotation API. During DTA, first the ATP description file is generated from the ATPlibrary. This file includes the tuning parameters with their specification and is used to define the search space. The intraphase tuning plugin was extended to also search this space to find the best settings for the ATPs. Finally the best configurations are also stored in the ATM and passed to RAT.
 
-In details, the application developer exposes control variable and mark them as ATPs with the API functions. These functions are listed in the Listing \ref{lbl:atp_declare}.
-
-%\vspace{0.4cm}
-%\begin{minipage}{\linewidth}
-%\begin{lstlisting}[caption={ATP library API functions}, label={lbl:atp_declare}]
-%ATP_PARAM_DECLARE(const char *param_name, const char param_type, int default_value, const char *domain_name)
-%ATP_PARAM_ADD_VALUES(const char *param_name, void *vArray, int array_size, const char *domain_name)
-%---------------------------------------------------------------------------
-%ATP_PARAM_GET(const char *param_name, void *atp_address, const char *domain_name)
-%---------------------------------------------------------------------------
-%ATP_CONSTRAINT_DECLARE(const char *constraint_name, const char *constraint_expr, const char *domain_name)
-%ATP_EXPLORATION_DECLARE(const char *explorations_list, const char *domain_name)
-%\end{lstlisting}
-%\end{minipage}
-
-At the moment, the ATP library handles only integers. If the required ATP has another variable type, the user must map the space of non-integer type values to integers.
-
-The function \texttt{ATP\_PARAM\_DECLARE} declares the parameter's name, type, default value and domain. The function \texttt{ATP\_PARAM\_ADD\_VALUES} allows to add possible values the parameter can take, in a range specified by minimal, maximal and increment values ; or by enumerating explicitly the possible values.
+The application developer exposes control variables and mark them as ATPs with the API functions as illustrated in Listing~\ref{lbl:atp_declare}. The function \texttt{ATP\_PARAM\_DECLARE} declares the parameter's name, type, default value and domain. The function \texttt{ATP\_PARAM\_ADD\_VALUES} allows to add possible values the parameter can take, in a range specified by minimal, maximal and increment values; or by enumerating explicitly the possible values. The function \texttt{ATP\_PARAM\_GET} fetches the value given in the ATM from the RRL and assigns it to the control variable. 
 
 Several ATPs can be defined in the same code. They may be independent or not. In the latter case, there is a notion of constraints between the parameters. To indicate to READEX that parameters have constraints between them, these parameters are put in the same \texttt{domain\_name}.
 
-Listing~\ref{lbl:atp_example} shows an example of manual annotation of some generic functions. The example shows how the parameter is transfered from the tuning system through the function \texttt{ATP\_PARAM\_GET} and how the constraints are 
-defined through the function \texttt{ATP\_CONSTRAINT\_DECLARE}.
+
 	\definecolor{mygray}{rgb}{0.46,0.46,0.46}
 	\lstset{language=[90]Fortran,
 		%	basicstyle=\ttfamily,
@@ -69,6 +40,7 @@ defined through the function \texttt{ATP\_CONSTRAINT\_DECLARE}.
 		escapeinside={(@*}{*@)},
 	}
 \todo{somehow, the listing has no number. why?}
+
 \begin{multicols}{2}[\captionof{lstlisting}{ATP constraint and exploration declaration with the ATP library.}] \label{lbl:atp_example}
 \begin{lstlisting}[language=C,xleftmargin=3em,frame=none,title=\phantom{xxx}]
 void foo(){
@@ -115,26 +87,14 @@ void bar(){
 
 Once the source code is annotated and the compiled code is executed, the ATP library generates a description file in which the ATPs are written. This file contains the details about the declared application parameters.
 
-During DTA, PTF launches the ATP server that reads the ATP description file. The ATP server's task is to respond to PTF requests, such as providing the list of ATPs or a list of valid values of ATPs. The \textit{readex\_intraphase} tuning plugin uses the list of valid values to generate a search space of the tuning parameters (not only the ATPs) and explore it. The resulting tuning model also consists of the best combination of the ATPs.
+During DTA, PTF launches the ATP server that reads the ATP description file. The ATP server's task is to respond to PTF requests, such as providing the list of ATPs or a list of valid values of ATPs. The \texttt{readex\_intraphase} tuning plugin uses the list of valid values to generate a search space of the tuning parameters (not only the ATPs) and explore it. The resulting tuning model also consists of the best combination of the ATPs.
 
-The RRL uses the ATP library during the production run to apply the best configuration. 
+The plugin provides two new search strategies, \texttt{exhaustive\_atp} and \linebreak[4]\texttt{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
 
-\subsubsection{ATP Tuning} \label{atp-tuning} 
-The next step is to tune ATPs as they are specifically independent of the system-level tuning parameter. The application expert can provide such kind of application specific parameters for example algorithmic choices. The detail about ATP is described in section ~\ref{sec:atp}. 
+The \texttt{exhaustive\_atp} search space is built from the crossproduct of all valid combinations of ATPs. The plugin contacts to the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set is then built from the cross products of the computed valid points. 
 
-The plugin provides two new search strategies, \textbf{exhaustive\_atp} and \textbf{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
+On the other hand, the \texttt{individual\_atp} strategy tunes the domains individually. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains were explored.  
 
-The \textbf{exhaustive\_atp} search space is built from the crossproduct of all valid combinations of ATPs. The plugin contacts to the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set   is then built from the cross products of the computed valid points. 
+The tuning of ATPs is done before the tuning of the frequencies and the threads since it determines the algorithm to be used during execution. This algorithm is then tuned in subsequent tuning steps of the intraphase tuning plugin with respect to the system and runtime parameters. 
 
-On the other hand, the \textbf{individual\_atp} stratgey is computed from the domains individually instead of the crossproduct of the valid points of the domains. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains were explored. The search strategy then used \textbf{exhaustive\_atp} to explore the valid points of a domain. 
-
-
-
-
-%	Explain that ATPs are combined to domains and those in a domain can have constraints. 
-%		Manual insertion into code (ATP library). Can use runtime info to set e.g. the value space of an ATP.
-%		Pre DTA: Generation of ATP file
-%		During DTA: ATP server providing valid settings for ATPs based on the value space and the constraints.
-%		During RAT: Read by ATP library from the RRL
-
-
+The configuration of ATPs is finally passed to RAT through the ATM as any other tuning parameter. At runtime, the optimal value is read through the ATPlibrary in combination with the RRL and is assigned to the control variable.

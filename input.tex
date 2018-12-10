@@ -1,13 +1,6 @@
 \subsection{Input Identifiers} \label{sec:input}
-\textbf{TUM and NTNU (1 page)}
-\textcolor{blue}{
-\begin{enumerate}
-	\item Motivation
-	\item Explain how input identifiers are given in separate file.
-	\item Talk about handling of processes/threads
-	\item Tuning model merging
-\end{enumerate}}
-DTA exploits the characteristic variations in the applications for different input sets to improve the tuning model by identifying more rts's due to variations in application executions. Different application executions are identified via input identifiers in the form of key-value pairs in a separate file. For example, in the MG benchmark, different grid sizes may change the compute intensity characteristics while switching to different grid levels. As the optimal configuration changes due to this switching, the grid size  may be considered as an input identifier. In addition to the grid size, the number of processes also changes the compute intensity. As the number of processes increase, data distributes better over the caches which results switching between memory bound and compute bound. Hence, the numbers of processes may also be considered as input identifiers.
+
+DTA exploits the characteristic variations in the applications for different input sets to improve the tuning model by identifying more rts's due to variations in application executions. Different application executions are identified via input identifiers in the form of key-value pairs in a separate file. For example, in the MG benchmark, the maximum grid resolution may change the compute intensity characteristics on the different grid levels. The change from memory to compute bound on coarser grids might happen later if the resolution of the finest gird is higher. To be more precise, the combination of the finest resolution and the number of processes onto which the grids are distributed influence the computational characteristics. As the number of processes increase, data distributes better over the caches which results switching between memory bound and compute bound. Hence, the numbers of processes may also be considered as input identifiers. 
 
 Each input identifier is attached to a specific ATM while generating the tuning model at the end of the \texttt{readex\_intraphase} plugin. In order for all of the tuning information from the different ATMs to be usable by the RRL, these tuning models must be merged into a single tuning model. This is performed by the tuning model merger.
 

@@ -91,10 +91,12 @@ After all scenarios are explored and optimal configurations are identified, the 
 
 \subsection{Runtime Application Tuning}
 \label{sec:runtime_tuning}
-Following the completion of design time analysis, production runs of the application can now be tuned at runtime using the optimal configurations summarized in the ATM using the READEX Runtime Library (RRL). The RRL monitors the application execution using the Score-P instrumentation, identifies the scenario that is encountered at runtime, and applies the corresponding optimal configurations for each scenario using the knowledge in the ATM to optimise the application's energy consumption. The RRL uses libraries that are loaded as plugins for setting different configurations for the parameters that are tuned by READEX.
+
+Following the completion of DTA, production runs of the application can now be tuned at runtime using the optimal configurations summarized in the ATM using the RRL. The RRL monitors the application execution using the Score-P instrumentation, identifies the scenario that is encountered at runtime, and applies the corresponding optimal configurations for each scenario using the knowledge in the ATM to optimise the application's energy consumption. The RRL uses libraries that are loaded as plugins for setting different configurations for the parameters that are tuned by READEX.
 
 \subsection{Pathway for READEX Workflow}
 \label{sec:pathway_for_readex_workflow}
+
 Since the READEX methodology has quite a number of steps, it uses Pathway to automate the entire workflow. Pathway \cite{Pathway:Petkov13} is a tool for designing and executing performance engineering workflows for HPC applications. Pathway provides an out-of-the box workflow template that can be configured to apply READEX on an application in a HPC system of choice. This way, Pathway can keep track of each step that must be completed in order to obtain the tuning results. Figure~\ref{fig:pathway_browser} presents an example of a custom browser in Pathway that summarizes the results from each step of applying READEX on the miniMD application. \todo{say what the figure shows}
 
 %\begin{figure}[!t]
