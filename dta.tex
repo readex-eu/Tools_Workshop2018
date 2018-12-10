@@ -1,11 +1,11 @@
 \section{Design-Time Analysis} \label{sec:dta}
 The output of readex-dyn-detect~\cite{kumaraswamy2018design} is stored in a configuration file in the \textit{xml} format. The configuration file consists of tags through which the user can provide specifications for:
-\begin{itemize}
-	\item Tuning parameters: Specified via the ranges (minimum, maximum, step size, and default) for the CPU frequency, uncore frequency, and the number of OpenMP threads.
-	\item Objectives: These can be the Energy, Execution Time, CPU Energy, Energy Delay Product, Energy Delay Product Squared, CPUEnergy, Total Cost of Ownership (TCO), as well as their normalized versions. The normalized versions compute the energy consumption per instruction, and can be used for applications with varying amounts of computation in a phase but no change in the phase characteristics.
-	\item Energy metrics: These include the energy plugin name and associated metric names. 
-	\item Search algorithm: This can be the exhaustive, random or individual search strategy.
-\end{itemize} 
+\begin{description}
+	\item [Tuning parameters:] Specified via the ranges (minimum, maximum, step size, and default) for the CPU frequency, uncore frequency, and the number of OpenMP threads.
+	\item [Objectives:] These can be the Energy, Execution Time, CPU Energy, Energy Delay Product, Energy Delay Product Squared, CPUEnergy, Total Cost of Ownership (TCO), as well as their normalized versions. The normalized versions compute the energy consumption per instruction, and can be used for applications with varying amounts of computation in a phase but no change in the phase characteristics.
+	\item [Energy metrics:] These include the energy plugin name and associated metric names. 
+	\item [Search algorithm:] This can be the exhaustive, random or individual search strategy.
+\end{description}
 
 DTA is performed by the Periscope Tuning Framework (PTF), which is a distributed framework consisting of the frontend, the tuning plugins, the experiment execution engine and a hierarchy of analysis agents. During DTA, PTF reads the configuration file, and calls a tuning plugin~\cite{AutoTune:Book2015}, which searches the multi-dimensional space of system configurations, each of which is a tuning parameter. The tuning plugin performs one or more tuning steps, in which a user-specified search algorithm determines the set of system configurations that are evaluated. Each tuning step executes experiments to measure the effect of the system configuration on the objective. At the end of each tuning step, the plugin checks if the application should be restarted. After all the tuning steps are completed, the plugin generates tuning advice for the application.
 
@@ -14,9 +14,9 @@ Two new plugins, \texttt{readex\_intraphase} and the \texttt{readex\_interphase}
 
 \subsection{Intra-Phase Plugin} \label{sec:intra-phase}
 
-PTF performs intra-phase dynamism tuning by executing \textbf{readex\_intraphase} plugin when there is no changes of the dynamic characteristics across the sequence of phases.  
+PTF performs intra-phase dynamism tuning by executing \texttt{readex\_intraphase} plugin when there is no changes of the dynamic characteristics across the sequence of phases.  
 
-The \textbf{readex\_intraphase} plugin is executed in four tuning steps: default execution, ATP tuning, system parameter tuning and the verification step. The default exection is the computation of the objective value for the default paramter settings. Next, the ATP tuning investigates optimal settings for the given ATPs. The application is tuned with the optimal ATP settings along with the system level parameters during the system parameter tuning step. The verification step analyzes the results of the previous step and determines the best system configuration for the phase region as well as the specific best settings for the rts's.
+The \texttt{readex\_intraphase} plugin is executed in four tuning steps: default execution, ATP tuning, system parameter tuning and the verification step. The default exection is the computation of the objective value for the default paramter settings. Next, the ATP tuning investigates optimal settings for the given ATPs. The application is tuned with the optimal ATP settings along with the system level parameters during the system parameter tuning step. The verification step analyzes the results of the previous step and determines the best system configuration for the phase region as well as the specific best settings for the rts's.
 
 \subsubsection{Default Execution} \label{intra-default-execution} 
 
@@ -65,8 +65,7 @@ best configurations. Phases that were noise points in the clustering step are ex
 
 The plugin first creates a new node for each cluster, and then clones the children of the phase region of the Calling Context Graph (CCG)~\cite{kumaraswamy2018design}. It stores the tuning results, including the measured objective values and the ranges of the features for the cluster in each node. 
 
-\subsection{Computation of Savings}
-Like the \texttt{readex\_intraphase} plugin, the \texttt{readex\_interphase} plugin computes the savings as described in Section~\ref{sec:com-savings}. However, the \texttt{readex\_interphase} plugin aggregates the improvements across all the clusters.
+Like the \texttt{readex\_intraphase} plugin, the \texttt{readex\_interphase} plugin computes the savings as described before. However, the \texttt{readex\_interphase} plugin aggregates the improvements across all the clusters.
 
 %The tuning model contains the list of clusters generated by the clustering algorithm, the set of phases belonging to each cluster, the ranges of the features that were used for clustering, the list of rts's that were tuned by the plugin, the scenarios into which they are classified, and the best configuration for each scenario.
 
