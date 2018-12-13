@@ -15,7 +15,7 @@
 %	\item Results for ATPs
 %\end{enumerate}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-To demonstrate that READEX is capable of supporting different architectures and software stacks, we tested it on the Intel Haswell and Intel Broadwell processors both at TU Dresden's Top500 cluster Taurus. Taurus' Haswell (two Xeon E5-2680 v3 sockets on a single node, with 12 cores each) partition was selected especially due to the reliable power measurement infrastructure called HDEEM~\cite{hdeem} that was used for energy measurement in this project. For energy measurements on the Broadwell (two Xeon E5-2680 v4 sockets, with 14 cores each) partition, we used the Intel RAPL counters with 75\,W baseline~\footnote{Broadwell's baseline has been established based on low frequency measurements from IPMI.} to measure the energy consumption of not only the CPUs but the whole node similar to HDEEM.
+To demonstrate that READEX is capable of supporting different architectures and software stacks, we tested it on the Intel Haswell and Intel Broadwell processors both at TU Dresden's Top500 cluster Taurus\footnote{\url{https://doc.zih.tu-dresden.de/hpc-wiki/bin/view/Compendium/SystemTaurus}}. Taurus' Haswell (two Xeon E5-2680 v3 sockets on a single node, with 12 cores each) partition was selected especially due to the reliable power measurement infrastructure called HDEEM~\cite{hdeem} that was used for energy measurement in this project. For energy measurements on the Broadwell (two Xeon E5-2680 v4 sockets, with 14 cores each) partition, we used the Intel RAPL counters with 75\,W baseline~\footnote{The baseline for the Broadwellpartition has been established based on low frequency measurements from IPMI.} to estimate the energy consumption of not only the CPUs but the whole node similar to HDEEM.
 
 %Another site where we did the tests is Haswell (two Xeon E5-2680 v3 on single node, 12 cores each) based cluster Salomon operated by IT4Innovations national supercomputing center, in this case the Intel RAPL counters had been used for energy measurement. Taurus as well as Salomon system are listed in the Top500 list most power-full supercomputers.
 
@@ -23,11 +23,11 @@ To demonstrate that READEX is capable of supporting different architectures and 
 
 The following text presents the energy savings that were achieved when using the READEX methodology on READEX test applications, as well as full-fledged applications. The READEX test applications consist of three basic benchmarks: Kripke, Lulesh and Blasbench. BEM4I and ESPRESO are full-fledged applications, whose results are presented in more detail in this section. 
 
-BEM4I~\cite{ch6_MerZap2013} is a solver for partial differential equations based on the boundary element method, and is under development at IT4Innovations. Contrary to finite element solvers, BEM4I produces dense matrices, and due to the nature of boundary integral equations, the assembly of system matrices is more or less compute bound. In contrast, the iterative solver used for the solution of the resulting system of linear equations is usually memory bound due to matrix vector multiplications. BEM4I is thus a suitable library to be included in the READEX test applications.
+BEM4I~\cite{ch6_MerZap2013} is a solver for partial differential equations based on the boundary element method, and is under development at IT4Innovations. Contrary to finite element solvers, BEM4I produces dense matrices, and due to the nature of boundary integral equations, the assembly of system matrices is more or less compute bound. In contrast, the iterative solver used for the solution of the resulting system of linear equations is usually memory bound due to matrix vector multiplications.
 
 The ESPRESO library~\cite{ESPRESOijhpca} is a combination of Finite Element (FEM) and Boundary Element (BEM) tools and TFETI/HTFETI solvers. It supports FEM and BEM (uses BEM4I library) discretization for Advection-diffusion equation, Sto\-kes flow and structural mechanics. The ESPRESO solver is a parallel linear solver, which includes a highly efficient MPI communication layer for inter-node communication, and OpenMP for intra-node communication.
 
-\begin{table}[h]
+\begin{table}[t]
     \centering
 %	\resizebox{\textwidth}{!}
 %	{%
@@ -94,7 +94,7 @@ For the memory bound solver (GMRES), manual tuning resulted in a low core freque
 		dynamic savings [\%]	&  -0.6/-30.6	&   1.5/-20.9 & 53.9/23.2 & 74.3/62.9 & 34.0/10.9 \\ \hline
 		\end{tabular}
 	}
-    \caption{Comparison of the energy and time consumption for the default, optimal static and dynamic configurations of BEM4I.}
+    \caption{Comparison of the energy and time consumption for the default, optimal static, and dynamic configurations of BEM4I.}
     \label{tab:BEM4Idynamicity2}
 \end{table}
 The energy and time consumption of each region in the application in optimum static and optimum dynamic (optimum configuration for the region itself) configuration is presented in Table~\ref{tab:BEM4Idynamicity2}. While static savings reached 15.7~\%, the dynamic switching among individual configurations increased the savings to 34.0~\% on the Haswell nodes. Decrease in the run time in this case was caused by NUMA effects of the MKL solver -- the tuned version runs on eight threads, and due to the compact affinity, all threads run on a single socket. It can also be seen that the optimum static configuration has very bad impact on the \texttt{assemble\_k} and \texttt{assemble\_v} regions, and also resulting in a suboptimal behavior of the region \texttt{print\_vtu}.
@@ -103,7 +103,7 @@ The energy and time consumption of each region in the application in optimum sta
 \subsection{Application Parameters tuning}
 As mentioned in Section~\ref{sec:extensions}, READEX comes with two approaches to tune application parameters: (1) using the ATP library, and (2) using Application Configuration Parameters (ACP). The integration of the ATP library requires developer knowledge of the application and therefore, we implemented this support into the ESPRESO library, which was developed by IT4Innovations in the READEX project.
 
-A long list of ATPs were evaluated: runtime tuning of FETI METHOD (2 options), PRECONDITIONERS (5 options), ITERATIVE SOLVERS (2 options), HFETI type (2 options), SCALING (2 options), BO\_TYPE (2 options), NON-UNIFORM PARTS (6 options), REDUNDANT LAGRANGE (2 options) and adaptive precision (2 options). For runtime tuning of domain decomposition (10 options), the developer had to implement the support for this parameter, since ESPRESO performs domain decomposition only during startup. For READEX, we developed an enhanced ESPRESO to redo the decomposition after each time-step of a transient simulation. The resultant total number of possible combinations was 3840.
+A long list of ATPs were evaluated: runtime tuning of FETI METHOD (2 options), PRECONDITIONERS (5 options), ITERATIVE SOLVERS (2 options), HFETI type (2 options), SCALING (2 options), BO\_TYPE (2 options), NON-UNIFORM PARTS (6 options), REDUNDANT LAGRANGE (2 options) and adaptive precision (2 options). For runtime tuning of domain decomposition (10 options), the developer had to implement the support for this parameter, since ESPRESO performs domain decomposition only during startup. For READEX, we developed an enhanced ESPRESO to redo the decomposition after each time-step of a transient simulation. The resulting total number of possible combinations was 3840.
 
 Besides the ESPRESO library, we analyzed three other applications using the ATPs or ACPs. The energy savings are presented in Table~\ref{tab:ATPACP}.
 
@@ -125,4 +125,4 @@ INDEED      & 3/12   & 35\% &     25\% \\ \hline
     \label{tab:ATPACP}
 \end{table}
 
-Since there is no default configuration in ESPRESO, the user has to setup the FETI solver in ESPRESO based on the knowledge of the problem that has to be solved. Hence, the savings against the default configuration are not presented. Instead, the energy consumption in the best and the worst case are compared. The worst case scenario took 1320 seconds and consumed about 230 kJ, while the best case scenario consumed 32.5 kJ in 189 seconds. Comparing these two cases gives us 86\% energy savings. If the user specifies some reasonable settings, the energy consumption might be about 50-66\% higher than in the best possible settings.
+Since there is no default configuration in ESPRESO, the user has to define the FETI solver based on the knowledge of the problem that has to be solved. Hence, the savings against the default configuration are not presented. Instead, the energy consumption in the best and the worst case are compared. The worst case scenario took 1320 seconds and consumed about 230 kJ, while the best case scenario consumed 32.5 kJ in 189 seconds. Comparing these two cases gives us 86\% energy savings. If the user specifies some reasonable settings, the energy consumption might be about 50-66\% higher than in the best possible settings.

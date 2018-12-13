@@ -4,7 +4,7 @@ The output of the pre-analysis step~\cite{kumaraswamy2018design} is stored in a 
 	\item [Tuning parameters:] Specified via the ranges (minimum, maximum, step size, and default) for the CPU frequency, uncore frequency, and the number of OpenMP threads.
 	\item [Objectives:] These can be the energy, execution time, CPU energy, Energy Delay Product (EDP), Energy Delay Product Squared, CPU energy, Total Cost of Ownership (TCO), as well as their normalized versions. The normalized versions compute the energy consumption per instruction, and can be used for applications with varying amounts of computation in a phase but no change in the phase characteristics.
 	\item [Energy metrics:] These include the energy plugin name and the associated metric names. 
-	\item [Search algorithm:] This can be the exhaustive, random or individual search strategy.
+	\item [Search algorithm:] This can be the exhaustive, random, or individual search strategy.
 \end{description}
 
 DTA is performed by the Periscope Tuning Framework (PTF), which is a distributed framework consisting of the frontend, the tuning plugins, the experiment execution engine and a hierarchy of analysis agents. During DTA, PTF reads the configuration file, and calls a tuning plugin~\cite{AutoTune:Book2015}, which searches the multi-dimensional space of system configurations, each of which is a tuning parameter. The tuning plugin performs one or more tuning steps, in which a user-specified search algorithm determines the set of system configurations that are evaluated. Each tuning step executes experiments to measure the effect of the system configuration on the objective. At the end of each tuning step, the plugin checks if the application should be restarted. After all the tuning steps are completed, the plugin generates tuning advice for the application.
@@ -41,7 +41,7 @@ The plugin then determines the static and dynamic savings for the rts's and stat
 
 \subsection{Inter-Phase Plugin} \label{sec:inter-phase}
 
-The \texttt{readex\_interphase} plugin~\cite{PDPTA_18_Kumaraswamy} is used for tuning applications that exhibit inter-phase dynamism, where the execution characteristics change across the sequence of phases. While the \texttt{readex\_intraphase} plugin does not consider similarities in the behavior between different phases, the \texttt{readex\_interphase} tuning plugin first groups similarly behaving phases into clusters, and then determines the best configuration for each cluster. It also determines the best configurations for the rts's of each created cluster.
+The \texttt{readex\_interphase} plugin~\cite{PDPTA_18_Kumaraswamy} is used for tuning applications that exhibit inter-phase dynamism, where the execution characteristics change across the sequence of phases. While the \texttt{readex\_intraphase} plugin does not consider changes in the behavior of different phases, the \texttt{readex\_interphase} tuning plugin first groups similarly behaving phases into clusters, and then determines the best configuration for each cluster. It also determines the best configurations for the rts's of each created cluster.
 
 The \texttt{readex\_interphase} plugin performs three tuning steps: cluster analysis, default execution and verification to first cluster the phases, then execute experiments for the default setting of the tuning parameters, and finally, verify if the theoretical savings match the actual savings incurred after switching the configurations. Sections~\ref{cluster-analysis},~\ref{default-execution} and~\ref{verification} describe the tuning steps in detail.
 
@@ -61,7 +61,7 @@ The tuning plugin restarts the application and performs the same number of exper
 \subsubsection{Verification} \label{verification} 
 The plugin restarts the application and executes the same number of experiments as the previous tuning steps. In each experiment, the plugin executes the phase with the
 corresponding cluster-best configuration and the rts's with their rts-specific
-best configurations. Phases that were noise points in the clustering step are executed with the default configuration.
+best configurations. Phases that were considered noise in the clustering step are executed with the default configuration.
 
 After executing all the experiments, the plugin modifies the Calling Context Graph (CCG)~\footnote{A context sensitive version of the call graph} by creating a new node for each cluster, and then clones the children of the phase region. It stores the tuning results and the ranges of the features for the cluster in each newly created node. 
 

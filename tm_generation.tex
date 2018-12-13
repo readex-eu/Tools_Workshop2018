@@ -3,7 +3,7 @@
 At the end of the DTA, the Application Tuning Model (ATM) is generated based on the best system configuration computed via the tuning plugins. A best configuration is found for each rts. One option at runtime is to switch configuration each time a new rts is encountered. However, this would result in very frequent switching, with a 
 corresponding switching overhead (time and energy). To avoid this, READEX merges rts's into scenarios, and assigns a common configuration for all rts's in that scenario. The obvious solution is to merge rts's with identical best found configurations into scenarios. Since the set of possible configurations is very large, this can still result in too frequent switching. Hence, READEX merges rts's with similar configurations into scenarios and uses one common configuration for all rts's in a scenario.
 
-The ATM thus consists of the complete set of rts's, each determined by their 
+The resulting ATM consists of the complete set of rts's, each determined by their 
 identifier values and each with a link to the corresponding scenario. In 
 addition, the ATM contains a list of the scenarios, each with a corresponding 
 configuration. The ATM is given as a readable JSON text file. By avoiding to 
