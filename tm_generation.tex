@@ -1,18 +1,7 @@
 \section{Tuning Model Generation} \label{tm-generation}
 
-At the end of the Design Time Analysis (DTA), the Application Tuning Model (ATM) 
-is generated based on the best system configuration computed via the tuning 
-plugins. A best configuration is found for each runtime situation (rts). One 
-option at runtime could have been to switch configuration each time a new rts is 
-encountered. This would result in very frequent switching, however, with a 
-corresponding switching overhead (time and energy). To avoid this, the READEX 
-tool-suite merges rts's into scenarios, and assigns a common configuration for 
-all rts's in that scenario. An obvious solution is to merge rts's with identical 
-best found configurations into scenarios. Since the set of possible 
-configurations is very large, this can still result in too frequent switching. 
-The READEX tool-suite hence also merges rts's with similar configurations into 
-scenarios and uses one common configuration for all rts's in a scenario. More 
-details of this process will be given below.
+At the end of the DTA, the Application Tuning Model (ATM) is generated based on the best system configuration computed via the tuning plugins. A best configuration is found for each rts. One option at runtime is to switch configuration each time a new rts is encountered. However, this would result in very frequent switching, with a 
+corresponding switching overhead (time and energy). To avoid this, READEX merges rts's into scenarios, and assigns a common configuration for all rts's in that scenario. The obvious solution is to merge rts's with identical best found configurations into scenarios. Since the set of possible configurations is very large, this can still result in too frequent switching. Hence, READEX merges rts's with similar configurations into scenarios and uses one common configuration for all rts's in a scenario.
 
 The ATM thus consists of the complete set of rts's, each determined by their 
 identifier values and each with a link to the corresponding scenario. In 
@@ -24,22 +13,15 @@ To cluster rts's that should be merged into a scenario, a three step process is
 used: dendogram generation, cluster generation, and scenario creation. The 
 dendogram is a tree expressing the (dis-)similarity of rts's based on their 
 configurations. The tree's leaves represent the rts's, whereas all intermediate 
-nodes represent the clusters of these rts's.  Lance-Williams algorithm 
+nodes represent the clusters of these rts's. Lance-Williams algorithm~
 \cite{Lance1967} recursively computes the inter-cluster distance, which is used 
 as a metric to always merge the closest clusters. The algorithm continues until 
 all clusters are merged into a single cluster. 
 
-The second step consists in making a cut through the tree in such a way that it 
-minimizes the dispersion of configurations within a cluster, while at the same 
-time maximizing the dispersion between clusters. Using the 
-\emph{Calinski-Harabasz Index} \cite{Calinski1974}, these values can be combined 
-in such a way that an optimal number of clusters can be found. This can again be 
-used to compute the point where the tree is cut to create clusters. Each cluster 
-represents a scenario.
+The second step makes a cut through the tree in such a way that it minimizes the dispersion of configurations within a cluster, while at the same time maximizing the dispersion between clusters. Using the \emph{Calinski-Harabasz Index}~\cite{Calinski1974}, these values can be combined in such a way that an optimal number of clusters can be found. This can again be used to compute the point where the tree is cut to create clusters. Each cluster represents a scenario.
 
-The final step is to select a configuration for each scenario, based on the 
+The final step selects a configuration for each scenario, based on the 
 configurations of the rts's belonging to each of them. Currently, this can be 
 done either by picking one of the configurations at random, or by computing the 
 average for each configuration parameter. Picking the random configuration is 
 the current default, since the configurations are in any case close.
-

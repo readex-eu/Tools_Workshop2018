@@ -31,55 +31,49 @@
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
-\author{Madhura Kumaraswamy \inst{1} \and Anamika Chowdhury \inst{1} \and Michael Gerndt \inst{1} \and
-Nico Reissmann \inst{2} \and Per Gunnar Kjeldsberg \inst{2} \and
-Ondrej Vysocky \inst{3} \and Jan Zapletal \inst{3} \and Lubomir Riha \inst{3}
-\and Umbreen Sabir Mian \inst{4} \and Robert Sch\"one \inst{4} \and Andreas Gocht \inst{4} \and
-Venkatesh Kannan \inst{5} \and Ramon Carreras \inst{5} \and 
-Othman Bouizi \inst{6} \and Marie-Christine Sawley \inst{6}}
+\author{Madhura Kumaraswamy \inst{1} \and Anamika Chowdhury \inst{1} \and Andreas Gocht \inst{2} \and Jan Zapletal \inst{5} \and Kai Diethelm \and Lubomir Riha \inst{5} \and Marie-Christine Sawley \inst{6} \and Michael Gerndt \inst{1} \and Nico Reissmann \inst{3} \and Ondrej Vysocky \inst{5} \and Othman Bouizi \inst{6} \and Per Gunnar Kjeldsberg \inst{3}  \and Ramon Carreras \inst{4} \and Robert Sch\"one \inst{2} \and Umbreen Sabir Mian \inst{2} \and Venkatesh Kannan \inst{4}}
 %
 \authorrunning{Kumaraswamy, M et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
 \institute{ Department of Informatics, Technical University of Munich, Bavaria, Germany 
-\email{kumarasw@in.tum.de}\\ \and
-Norwegian University of Science and Technology, NTNU, Trondheim, Norway \\ \and 
-IT4Innovations national supercomputing center, V\v{S}B -- Technical University of~Ostrava, Ostrava, Czech Republic \\ \and 
-Technische Universit\"at Dresden, Germany \\ \and
-Irish Centre for High-End Computing, Ireland \and
-Intel ExaScale Labs, Paris, France}
+	\email{kumarasw@in.tum.de}\\ \and
+	Technische Universit\"at Dresden, Germany \\ \and
+	Norwegian University of Science and Technology, NTNU, Trondheim, Norway \\ \and 
+	Irish Centre for High-End Computing, Ireland \\ \and
+	IT4Innovations National Supercomputing Center, V\v{S}B -- Technical University of~Ostrava, Ostrava, Czech Republic \\ \and 
+	Intel ExaScale Labs, Paris, France \\ \and
+	Gesellschaft f\"ur numerische Simulation GmbH, Germany }
 
 \maketitle              % typeset the header of the contribution
 
 \begin{abstract}
-With today's top supercomputers consuming several megawatts of power, optimization of energy consumption has become one of the major challenges on the road to exascale computing.
-The EU Horizon 2020 project READEX provides a tools-aided auto-tuning methodology to dynamically tune HPC applications for energy-efficiency. READEX is a two-step methodology, consisting of the design-time analysis and runtime tuning stages. At design-time, READEX exploits application dynamism using the readex\_intraphase and the readex\_interphase tuning plugins, which perform tuning steps, and provide tuning advice in the form of a tuning model. During production runs,, the runtime tuning stage reads the tuning model and  dynamically switches the settings of the tuning parameters for different application regions. Additionally, READEX also includes a tuning model visualizer and support for tuning application level tuning parameters to improve the result beyond the automatic version. This paper describes the state of the art used in READEX for energy-efficiency autotuning for HPC. Energy savings achieved for Kripke, Lulesh, Blasbench, BEM4I and ESPRESO for the Haswell and Broadwell processors highlight the effectiveness of this methodology.
+With today's top supercomputers consuming several mega\-watts of power, optimization of energy consumption has become one of the major challenges on the road to exascale computing.
+The EU Horizon 2020 project READEX provides a tools-aided auto-tuning methodology to dynamically tune HPC applications for energy-efficiency. READEX is a two-step methodology, consisting of the design-time analysis and runtime tuning stages. At design-time, READEX exploits application dynamism using the \textit{readex\_intraphase} and the \textit{readex\_interphase} tuning plugins, which perform tuning steps, and provide tuning advice in the form of a tuning model. During production runs, the runtime tuning stage reads the tuning model and dynamically switches the settings of the tuning parameters for different application regions. Additionally, READEX also includes a tuning model visualizer and support for tuning application level tuning parameters to improve the result beyond the automatic version. This paper describes the state of the art used in READEX for energy-efficiency auto-tuning for HPC. Energy savings achieved for different proxy benchmarks and production level applications on the Haswell and Broadwell processors highlight the effectiveness of this methodology.
 
 \keywords{DVFS \and energy-efficiency \and application dynamism \and machine learning \and HPC}
 \end{abstract}
 
 \section{Introduction} \label{sec:introduction}
 
-The top 1 machine in the November 2018 Top500 list is Summit at Oakridge National Laboratory. It consumes 9.8 MW with a peak performance of 200 PFlop/s. To reach the exascale level with this technology would already require 48 MW power. Therefore, energy reduction is a major goal for hardware, OS, runtime system, application, and tool developers. 
+The top 1 machine in the November 2018 Top500 list is Summit at Oakridge National Laboratory. It consumes 9.8 MW with a peak performance of 200 PFlop/s. To reach the exascale level with this technology would already require 48 MW power. Therefore, energy reduction is a major goal for hardware, OS, runtime system, application and tool developers. 
 
-The European Horizon 2020 project READEX (Runtime Exploitation of Application Dynamism for Energy-efficient eXascale Computing)\footnote{www.readex.eu} funded from 2015-2018 developed the READEX Tool Suite\footnote{We use the abbreviation READEX for the tool suite in the rest of the paper.} for dynamic energy efficiency tuning of applications. It semi-automatically tunes hybrid HPC applications by splitting the tuning into a Design-Time Analysis (DTA) and a Runtime Application Tuning phase (RAT). 
+The European Horizon 2020 project READEX (Runtime Exploitation of Application Dynamism for Energy-efficient eXascale Computing)\footnote{www.readex.eu} funded from 2015-2018 developed the READEX tool suite\footnote{We use the abbreviation READEX for the tool suite in the rest of the paper.} for dynamic energy-efficiency tuning of applications. It semi-automatically tunes hybrid HPC applications by splitting the tuning into a \textit{Design-Time Analysis} (DTA) and a \textit{Runtime Application Tuning phase} (RAT) phase. 
 
-Of major impact on the power consumption of the processor is the clock frequency. The Intel Haswell processors that are used in the target machine Taurus at ZIH of TU Dresden allow to set the core and  uncore frequency. The basic idea is to lower the core frequency and increase the uncore frequency for memory bound regions since the processor is anyway waiting for data from memory.  Another important tuning parameter is the number of parallel OMP threads in a node. If a routine is memory bound, it might be more energy efficient to use only so many threads until the memory bandwidth is saturated. 
+READEX configures different tuning knobs (hardware, software and application parameters) based on dynamic application characteristics. The major impact on the power consumption of the processor is caused by the clock frequency. The Intel Haswell processors that are used in the target machine Taurus at ZIH of TU Dresden allow to set the core and the uncore frequency. The basic idea is to lower the core frequency and increase the uncore frequency for memory bound regions since the processor is anyway waiting for data from memory. Another important tuning parameter is the number of parallel OMP threads in a node. If a routine is memory bound, it might be more energy-efficient to use only so many threads until the memory bandwidth is saturated.
 
-Following the scenario based tuning approach \cite{filippopoulos2013exploration} from the embedded world, READEX creates an Application Tuning Model (ATM) at design-time which specifies optimal configurations of tuning parameters for individual program regions. This tuning model is then passed to RAT and is applied during production runs of the application by switching the tuning parameters to their optimal values when a tuned region is encountered. 
+Following the scenario-based tuning approach~\cite{filippopoulos2013exploration} from the embedded world, READEX creates an \textit{Application Tuning Model} (ATM) at design-time which specifies optimal configurations of the tuning parameters for individual program regions. This tuning model is then passed to RAT and is applied during production runs of the application by switching the tuning parameters to their optimal values when a tuned region is encountered. This dynamic tuning approach of READEX allows to exploit dynamic changes in the application characteristics for energy tuning while static approaches only optimize the settings for the entire program run. 
 
-This dynamic tuning approach of READEX allows to exploit dynamic changes in the application characteristics for energy tuning while static approaches only optimize the settings for the entire program run. 
+READEX even goes beyond tuning individual regions. It can distinguish different instances of regions, e.g., resulting from different call sites in the code. These instances, called \textit{runtime situations} (rts), can have different optimal configurations in the ATM. 
 
-READEX even goes beyond tuning individual regions. It can distinguish different instances of regions, e.g., resulting from different call sites in the code. These instances, called runtime situations (rts), can have different optimal configurations in the ATM. 
+READEX leverages well established tools, such as Score-P for instrumentation and monitoring of the application~\cite{knupfer2012score}. The \textit{READEX Runtime Library} (RRL) implements RAT and is a new plugin for Score-P. The DTA is implemented via new tuning plugins for the Periscope Tuning Framework~\cite{PTF2.0IEEE2016}.  
 
-READEX leverages well established tools. For instrumentation and monitoring of the application the Score-P system~\cite{knupfer2012score} is used. The READEX Runtime Library (RRL) implements RAT and is a new plugin for Score-P. The DTA is implemented via new tuning plugins for the Periscope Tuning Framework~\cite{PTF2.0IEEE2016}.  
-
-For reading energy measurements and for modifying core and uncore frequencies, several interfaces are supported, such as libmsrsave~\cite{msrsave} and LIKWID~\cite{LIKWID}. Power measurements are based on the RAPL~\cite{Intel2018} counters or on special hardware, such as HDEEM~\cite{hdeem} on the Taurus machine in Dresden. If the target machine provides such special hardware new measurement plugins for Score-P have to be implemented. The availability of these interfaces is currently the major limitation for applying the READEX Tool Suite. Reading energy measurements as well as setting the frequencies requires root privileges and appropriate extensions to the kernel of the machine. 
+For reading energy measurements and for modifying core and uncore frequencies, several interfaces are supported, such as libmsrsave~\cite{msrsave} and LIKWID~\cite{LIKWID}. Power measurements are based on the RAPL~\cite{Intel2018} counters or on special hardware, such as HDEEM~\cite{hdeem} on the Taurus machine in Dresden. If the target machine provides such special hardware, new measurement plugins for Score-P have to be implemented. Moreover, reading energy measurements as well as setting the frequencies requires root privileges and appropriate extensions to the kernel of the machine. The availability of these interfaces is currently the major limitation for applying the READEX tool suite. 
 
 This paper focuses on the features of READEX, the steps to be taken by the user in applying the tools, and motivates why certain aspects are more or less suited for different applications. The paper is neither a user's guide nor a technical documentation of the inner workings of the tools comprising the tool suite. 
 
-Section~\ref{sec:related-work} presents related available tools for energy management of HPC systems. Section~\ref{sec:methodology} introduces the major steps in using the READEX Tool Suite and presents Pathway \cite{Pathway:Petkov13}, a tool for automating tool workflows for HPC systems. Section~\ref{sec:dta} presents DTA as the first step in tuning applications. The reasoning behind the generation of the ATM at the end of DTA is given in Section~\ref{tm-generation}. Section~\ref{sec:tm-visualization} introduces a tool for the visual analysis of the generated ATM. RAT is presented in Section~\ref{rat} and the visualization of dynamic switching based on the given ATM in Vampir is introduced in Section~\ref{fig:switch_visualization}. Extensions of the READEX Tool Suite are presented in Section~\ref{sec:extensions} and results from several applications on different machines are summarized in Section~\ref{sec:results}. Finally the paper draws some conclusions. 
+Section~\ref{sec:related-work} presents related available tools for energy management of HPC systems. Section~\ref{sec:methodology} introduces the major steps in using the READEX tool suite and presents Pathway \cite{Pathway:Petkov13}, a tool for automating tool workflows for HPC systems. Section~\ref{sec:dta} presents DTA as the first step in tuning applications. The reasoning behind the generation of the ATM at the end of DTA is given in Section~\ref{tm-generation}. Section~\ref{sec:tm-visualization} introduces a tool for the visual analysis of the generated ATM. RAT is presented in Section~\ref{rat}, and the visualization of dynamic switching based on the given ATM in Vampir is introduced in Section~\ref{fig:switch_visualization}. Extensions to the READEX tool suite are presented in Section~\ref{sec:extensions}, and results from several applications on different machines are summarized in Section~\ref{sec:results}. Finally the paper draws some conclusions. 
 
 
 \input{related_work.tex}
@@ -100,11 +94,11 @@ Section~\ref{sec:related-work} presents related available tools for energy manag
 
 \section{Conclusions} \label{sec:conclusions}
 
-The READEX project developed a tool suite for dynamic tuning of the energy efficiency of HPC applications. It pre-computes during design-time a tuning model that is then passed to the runtime for switching system configurations when certain regions start. This dynamic approach allows to specifically tune the configuration for individual runtime situations and thus to exploit the variation in the application characteristics during execution for energy reduction. 
+The READEX project developed a tool suite for dynamic tuning of the energy-efficiency of HPC applications. It pre-computes during design-time a tuning model that is then passed to the runtime for switching system configurations when certain regions start. This dynamic approach allows to specifically tune the configuration for individual runtime situations and thus exploits the variation in the application characteristics during execution for energy reduction. 
 
-READEX is based on established tools, i.e., Score-P for instrumentation, monitoring, and runtime tuning actions, and PTF for design-time analysis. In contrast to other tools, DTA is carried out in a single application run since it evaluates potential candidate configuration in single phases. As part of READEX, a novel plugin interface for Score-P was implemented that allows to add new functionality to the monitor in a transparent way. The RRL is the first demonstrator of this powerful extension mechanism.
+READEX is based on established tools, i.e., Score-P for instrumentation, monitoring, and runtime tuning actions, and PTF for design-time analysis. In contrast to other tools, DTA is carried out in a single application run since it evaluates potential candidate configurations in single phases. As part of READEX, a novel plugin interface for Score-P was implemented that allows the addition of new functionality to the monitor in a transparent way. The RRL is the first demonstrator of this powerful extension mechanism.
 
-The results obtained from tuning system, runtime, and application parameters for a wide range of benchmarks, proxy apps, and real applications were outlined in this paper as well. The results of dynamic tuning are clearly application dependent but demonstrate the significant potential of the READEX methodology.
+The paper also outlined the results obtained from the tuning system, runtime, and the application parameters for a wide range of benchmarks, proxy applications and real applications. The results of dynamic tuning are clearly application dependent but demonstrate the significant potential of the READEX methodology.
 
 
 
