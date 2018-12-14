@@ -22,6 +22,9 @@ Several ATPs can be defined in the same code. They may be independent or not. In
 Once the source code is annotated and the compiled code is executed, the ATP library generates a description file in which the ATPs are written. This file contains the details about the declared application parameters.
 
 During DTA, PTF launches the ATP server that reads the ATP description file. The ATP server's task is to respond to PTF requests, such as providing the list of ATPs or a list of valid values of the ATPs. The \texttt{readex\_intraphase} tuning plugin uses the list of valid values to generate a search space of the tuning parameters (not only the ATPs) and explore it. The resulting tuning model also consists of the best combination of the ATPs.
+
+The \texttt{readex\_intraphase} plugin provides two new search strategies, \linebreak \texttt{exhaustive\_atp} and \texttt{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
+
 \newpage
 
 \definecolor{mygray}{rgb}{0.46,0.46,0.46}
@@ -127,13 +130,10 @@ void bar(){
     // choose mesh size 3
   }
 }
-\end{lstlisting}
+\end{lstlisting} 
+The \texttt{exhaustive\_atp} search space is built from the cross-product of all valid combinations of ATPs. The plugin contacts the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set is then built from the cross-product of the computed valid points. 
 
-The \texttt{readex\_intraphase} plugin provides two new search strategies, \linebreak \texttt{exhaustive\_atp} and \texttt{individual\_atp} to compute the optimal ATP configuration. These two search strategies can also be configured via the READEX configuration file.
-
-The \texttt{exhaustive\_atp} search space is built from the cross-product of all valid combinations of ATPs. The plugin contacts to the ATP server to receive the valid combinations of the points for each of the given ATP domains. The configuration set is then built from the cross-product of the computed valid points. 
-
-On the other hand, the \texttt{individual\_atp} strategy tunes the domains individually. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains are explored.  
+On the other hand, the \texttt{individual\_atp} strategy tunes the domains individually. It first evaluates all valid points for the first domain. The best point from this domain remains fixed and the next domain is investigated until all the domains are explored.
 
 The tuning of ATPs is done before the tuning of the frequencies and the threads since it determines the algorithm to be used during execution. This algorithm is then tuned in subsequent tuning steps of the \texttt{readex\_intraphase} tuning plugin with respect to the system and runtime parameters. 
 

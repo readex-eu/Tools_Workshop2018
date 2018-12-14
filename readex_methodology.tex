@@ -11,9 +11,9 @@ The READEX methodology is split into two phases: design-time (during application
 
 \subsection{Application Instrumentation and Analysis Preparation}
 \label{sec:application_instrumentation}
-The first step in READEX is to instrument the HPC application by inserting probe-functions around different regions that are of interest to tuning. A region can be any arbitrary part of the code, for instance a function or a loop. READEX is based on instrumentation with Score-P and requires that the \textit{phase region} be manually annotated. A phase region is single-entry and exit region where most of the application progresses. Typically, a phase region may be the body of the main progress loop of the application. In addition to the phase region, READEX supports instrumentation of \textit{user regions} inside the phase region. User regions may be instrumented manually using Score-P or automatically by the compiler.
+The first step in READEX is to instrument the HPC application by inserting probe-functions around different regions that are of interest to tuning. A region can be any arbitrary part of the code, for instance a function or a loop. READEX is based on instrumentation with Score-P and requires that the \textit{phase region} be manually annotated. A phase region is a single-entry and exit region where most of the application progresses. Typically, a phase region may be the body of the main progress loop of the application. In addition to the phase region, READEX supports instrumentation of \textit{user regions} inside the phase region. User regions may be instrumented manually using Score-P or automatically by the compiler.
 
-The READEX methodology also allows exposing parameters that define dynamic behaviour of the application. These parameters, referred to as additional identifiers, will enhance the distinction of different scenarios into runtime situations during the application execution, potentially leading to better identification of optimal configurations for the different tuning parameters. An example of additional identifiers is different input data sets. Exposing this information allows READEX to detect different compute characteristics of the application caused by different inputs.
+The READEX methodology also allows exposing parameters that define the dynamic behaviour of the application. These parameters, referred to as additional identifiers, will enhance the distinction of different scenarios into runtime situations during the application execution, potentially leading to better identification of optimal configurations for the different tuning parameters. An example of additional identifiers is different input data sets. Exposing this information allows READEX to detect different compute characteristics of the application caused by different inputs.
 
 \subsection{Application Pre-analysis}
 \label{sec:dynamism_detection}
@@ -39,7 +39,7 @@ Listing \ref{lst:minimd_dynamism_summary} presents an example of the summary of 
 	commentstyle=\color{black},
 	escapeinside={(@*}{*@)},
 }
-\begin{lstlisting}[caption={Summary of Application Pre-analysis},label=lst:minimd_dynamism_summary]
+\begin{lstlisting}[caption={Summary of application pre-analysis},label=lst:minimd_dynamism_summary]
 ...
 Significant regions are:
 
@@ -82,7 +82,7 @@ void Neighbor::build(Atom&)
 \subsection{Derivation of Tuning Model}
 \label{sec:tuning_model_generation}
 
-Following the identification of exploitable dynamism in the pre-analysis step, the third step explores the space of possible tuning configurations, and identifies the optimal configurations of the tuning parameters for the phases and rts's during the application execution. This analysis is performed by PTF (Periscope Tuning Framework) in conjunction with Score-P and the RRL (READEX Runtime Library). PTF performs DTA experiments through a number of possible search strategies, such as exhaustive, individual, and heuristic search based on generic algorithm to identify the optimal configurations for the rts's of the significant regions identified in the pre-analysis step that exhibit dynamism. To achieve this, Score-P provides the instrumentation and profiling platform, while the RRL provides the platform for libraries to tune hardware and system parameters. Additionally, READEX also has dedicated libraries that tune application-specific parameters.
+Following the identification of exploitable dynamism in the pre-analysis step, the third step explores the space of possible tuning configurations, and identifies the optimal configurations of the tuning parameters for the phases and rts's during the application execution. This analysis is performed by PTF (Periscope Tuning Framework) in conjunction with Score-P and the RRL (READEX Runtime Library). PTF performs DTA experiments through a number of possible search strategies, such as exhaustive, individual, and heuristic search based on generic algorithm to identify the optimal configurations for the rts's of the significant regions identified in the pre-analysis step. To achieve this, Score-P provides the instrumentation and profiling platform, while the RRL provides the platform for libraries to tune hardware and system parameters. Additionally, READEX also has dedicated libraries that tune application-specific parameters.
 
 It is important to note that the additional identifiers, which can be specified during the instrumentation step provide additional domain knowledge to distinguish and identify different optimal configurations for runtime scenarios~\cite{PACO17}.
 
@@ -96,7 +96,7 @@ Following the completion of DTA, production runs of the application can now be t
 \subsection{Pathway for READEX Workflow}
 \label{sec:pathway_for_readex_workflow}
 
-Since the READEX methodology has quite a number of steps, it uses Pathway to automate the entire workflow. Pathway \cite{Pathway:Petkov13} is a tool for designing and executing performance engineering workflows for HPC applications. Pathway provides an out-of-the box workflow template that can be configured to apply READEX on an application in a HPC system of choice. This way, Pathway can keep track of each step that must be completed in order to obtain the tuning results. Figure~\ref{fig:pathway_browser} presents an example of a custom browser in Pathway that summarizes the results from each step of applying READEX on the miniMD application. The left pane shows the tuned applications. The top pane shows a list of experiments performed with the READEX workflow. Below are the results from the pre-analysis step, describing the dynamism detected in the application. The bottom pane displays the ATM containing the tuning results.
+Since the READEX methodology has quite a number of steps, it uses Pathway to automate the entire workflow. Pathway \cite{Pathway:Petkov13} is a tool for designing and executing performance engineering workflows for HPC applications. Pathway provides an out-of-the box workflow template that can be configured to apply READEX on an application in an HPC system of choice. This way, Pathway can keep track of each step that must be completed in order to obtain the tuning results. Figure~\ref{fig:pathway_browser} presents an example of a custom browser in Pathway that summarizes the results from each step of applying READEX on the miniMD application. The left pane shows the tuned applications. The top pane shows a list of experiments performed with the READEX workflow. The middle pane shows the results from the pre-analysis step, describing the dynamism detected in the application. The bottom pane displays the ATM containing the tuning results.
 
 %\begin{figure}[!t]
 %\centering

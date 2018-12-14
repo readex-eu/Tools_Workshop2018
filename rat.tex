@@ -19,12 +19,12 @@ Another check is performed to determine if the region must be tuned by computing
 For a coarse-granular region that is marked as unknown, the calibration mechanism is invoked.
 
 \subsection{Configuration Switching}\label{config-switching}
-The scenario detection step applies a new configuration to the current region only if the region entered is found to be significant and coarse-granular. The setting for each tuning parameter is controlled by a dedicated Parameter Control Plugin (PCP). The RRL switches configuration by sending a request to the according PCPs. 
+The scenario detection step applies a new configuration to the current region only if the region entered is found to be significant and coarse-granular. The setting for each tuning parameter is controlled by a dedicated Parameter Control Plugin (PCP). The RRL switches a configuration by sending a request to the PCPs. 
 
 The RRL supports two different modes for configuration switching: \textit{reset} and \textit{no-reset}. The \textit{reset} mode maintains a configuration stack. Whenever a new configuration is set, the previous configuration is pushed onto this stack. When the corresponding unset occurs (e.g., if an instrumented region is left), the element is removed from the stack and the previous configuration is re-applied. If the \textit{no-reset} mode is selected, the current configuration remains active until a new configuration is set, and the unset is ignored. This behaviour is configurable by the user. By default, the \textit{reset} mode is enabled.
 
 \subsection{Calibration}\label{calibr}
-READEX makes a distinction between seen and unseen rts's. For known or seen rts's that are already present in the ATM, RRL simply uses the optimal configuration, and performs configuration switching. For the unseen rts's, the RRL calibration mechanism, described in Section~\ref{sec:calibration} is used to find the optimal system configuration based on machine learning algorithms, as described in Section~\ref{sec:calibration}.
+READEX makes a distinction between seen and unseen rts's. For known or seen rts's that are already present in the ATM, RRL simply uses the optimal configuration, and performs configuration switching. For the unseen rts's, the RRL calibration mechanism, described in Section~\ref{sec:calibration} is used to find the optimal system configuration based on machine learning algorithms.
 
  
 %Before the current region exits, the RTS Handler receives the notification  from Score-P through Control Center. The RTS Hander checks if the current region was set up for calibration. If yes, it requests the configuration for the currently exited region from the
