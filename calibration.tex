@@ -1,28 +1,27 @@
 \subsection{Runtime Calibration} \label{sec:calibration}
 
-As described in Section~\ref{sec:runtime_tuning}, RAT distinguishes known and unknown rts's.
+As described in Section~\ref{sec:runtime_tuning}, RAT distinguishes known, also called seen, and unknown, also called unseen, rts's.
 
-Known rts's are those which have been encountered during DTA.
-Here, the optimal configuration for the rts's is known.
-However, unknown rts's describe those which have not been encountered during DTA.
-There are several reasons why unseen rts's might occur.
-First, an unseen rts may consist of already known regions, but with other user parameters that were not present during DTA or parameters that might have changed between DTA and runtime.
+Known or seen rts's are those who have been encountered during DTA.
+An optimal configuration is saved in the Tuning Model.
+Unkown or unseen rts's describe those rts which have not been encountered during DTA.
+There are several reasons why an unseen rts's might occur.
+First, the region itself might be known, but given user, parameters changed between DTA and runtime.
 Typically, these changes are related to different application inputs.
-Second, an unseen rts may consist of completely new regions, which were not seen during DTA.
+Second, an unseen rts may consist of entirely new regions, which were not seen during DTA.
 The goal of the calibration is to handle these unknown rts's during RAT.
 
-Since calibration is done during the production run, there are a few restrictions which have to be taken in account for the design of the calibration mechanism.
-First, there can be no user input and second, a good configuration has to be found in a short time.
-A DTA-like approach to search for an optimal configuration is not feasible as it would degrade the performance of the application.
-
-For runtime calibration, READEX provides two different machine learning based approaches.
-The first approach is a Q-Learning based mechanism~\cite{Gocht2019a}.
+Since calibration is done during the production run, there are two restrictions:
+First, there can be no user input and second, a suitable configuration has to be found in a short time.
+Therefore, we decided to implement a Q-Learning based mechanism~\cite{Gocht2019a}.
 The algorithm starts at a given core and uncore frequency.
 With a probability of {$\epsilon$}, the algorithm selects a different setting from the next direct neighbours.
 Then, it measures the energy at this point.
 Based on the measurement, it calculates the so-called Q-Value.
 Afterwards, the algorithm chooses the next optimal status according to the Q-Value and starts from the beginning.
-Figure~\ref{fig:qlearning} shows how the mechanism searches for an energy efficient optimum (core frequency = 2.3 GHz, uncore frequency = 2.2 GHz) starting from a selected initial setting (core frequency = 1.9 GHz, uncore frequency = 2.2 GHz).
+Figure~\ref{fig:qlearning} shows how the mechanism searches for an energy-efficient optimum.
+It starts an initial setting, with a core frequency of 1.9 GHz and an uncore frequency of 2.2 GHz
+When the application terminates a core frequency of 2.3 GHz and uncore frequency of 2.2 GHz is reached.
 
 \begin{figure}[!t]
 \centering
@@ -33,11 +32,11 @@ The algorithm starts at \{1.9, 2.2\} GHz and finds a more suitable setting \{2.3
 \label{fig:qlearning}
 \end{figure}
 
-In the second approach, the RRL uses performance counters to predict the optimal setting using neural networks.
-First, the approach identifies the most relevant performance counters.
-In a second step, it trains a shallow neural network in order to predict a good frequency.
-This model is then loaded during runtime.
-Once the RRL encounters an unseen RTS, it measures the relevant performance counters and uses the neural network to predict a good setting.
-In contrast to the Q-Learning approach, this approach does require a pre-training, which has to be performed once per system.
-However, once this is done, the network just needs to be evaluated, which requires less tuning and runtime overhead compared to the Q-Learning approach.
-
+% In the second approach, the RRL uses performance counters to predict the optimal setting using neural networks.
+% First, the approach identifies the most relevant performance counters.
+% In a second step, it trains a shallow neural network in order to predict a good frequency.
+% This model is then loaded during runtime.
+% Once the RRL encounters an unseen RTS, it measures the relevant performance counters and uses the neural network to predict a good setting.
+% In contrast to the Q-Learning approach, this approach does require a pre-training, which has to be performed once per system.
+% However, once this is done, the network just needs to be evaluated, which requires less tuning and runtime overhead compared to the Q-Learning approach.
+% 
