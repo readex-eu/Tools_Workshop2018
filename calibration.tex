@@ -1,23 +1,21 @@
 \subsection{Runtime Calibration} \label{sec:calibration}
 
 As described in Section~\ref{sec:runtime_tuning}, RAT distinguishes known, also called seen, and unknown, also called unseen, rts's.
+Known rts's have been encountered during DTA.
+Based on the used plugin and optimization criterium, optimal configurations for these are saved in the ATM.
+Unkown rts's, however, describe rts which have not been encountered during DTA.
+There are several reasons why unseen rts's might occur.
+The region itself might be known, but some parameters (e.g., application inputs) changed between DTA and runtime.
+Alternatively, an unseen rts could consist of entirely new regions, which were not seen during DTA.
+The goal of the runtime calibration is to handle these unknown rts's during RAT.
 
-Known or seen rts's are those who have been encountered during DTA.
-An optimal configuration is saved in the Tuning Model.
-Unkown or unseen rts's describe rts which have not been encountered during DTA.
-There are several reasons why an unseen rts's might occur.
-First, the region itself might be known, but given user, parameters changed between DTA and runtime.
-Typically, these changes are related to different application inputs.
-Second, an unseen rts may consist of entirely new regions, which were not seen during DTA.
-The goal of the calibration is to handle these unknown rts's during RAT.
-
-Since calibration is done during the production run, there are two restrictions:
+Since runtime calibration is done during production runs, there are two restrictions for the algorithm:
 First, there can be no user input and second, a suitable configuration has to be found in a short time.
-Therefore, we decided to implement a Q-Learning based mechanism~\cite{Gocht2019a}.
-The algorithm starts at a given core and uncore frequency.
-With a probability of {$\epsilon$}, the algorithm selects a different setting from the next direct neighbours.
-Then, it measures the energy at this point.
-Based on the measurement, it calculates the so-called Q-Value.
+Based on these, we implemented a Q-Learning based mechanism, which we introduced in~\cite{Gocht2019a}.
+For any unknown rts, the algorithm starts at a given core and uncore frequency.
+With a probability of {$\epsilon$}, the algorithm selects a different configuration from the next direct neighbors.
+To validate the outcome of the possible optimization, it measures the energy for all configurations.
+Based on the result of the measurement, it calculates the so-called Q-Value.
 Afterwards, the algorithm chooses the next optimal status according to the Q-Value and starts from the beginning.
 Figure~\ref{fig:qlearning} shows how the mechanism searches for an energy-efficient optimum.
 It starts an initial setting, with a core frequency of 1.9 GHz and an uncore frequency of 2.2 GHz
