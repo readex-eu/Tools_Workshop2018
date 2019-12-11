@@ -11,18 +11,21 @@ The READEX methodology is split into two phases: design-time (during application
 
 \subsection{Application Instrumentation and Analysis Preparation}
 \label{sec:application_instrumentation}
-The first step in READEX is to instrument the HPC application by inserting probe-functions around different regions that are of interest to tuning. A region can be any arbitrary part of the code, for instance a function or a loop. READEX is based on instrumentation with Score-P and requires that the \textit{phase region} be manually annotated. A phase region is a single-entry and exit region where most of the application progresses. Typically, a phase region may be the body of the main progress loop of the application. In addition to the phase region, READEX supports instrumentation of \textit{user regions} inside the phase region. User regions may be instrumented manually using Score-P or automatically by the compiler.
+The first step in READEX is to instrument the HPC application by inserting probe-functions around different regions that are of interest to tuning. A region can be any arbitrary part of the code, for instance a function or a loop. READEX is based on instrumentation with Score-P and requires that the \textit{phase region} is manually annotated. The phase region is the body of the main progress loop of the application. In addition to the phase region, READEX supports instrumentation of \textit{user regions} using Score-P.
 
-The READEX methodology also allows exposing parameters that define the dynamic behaviour of the application. These parameters, referred to as additional identifiers, will enhance the distinction of different scenarios into runtime situations during the application execution, potentially leading to better identification of optimal configurations for the different tuning parameters. An example of additional identifiers is different input data sets. Exposing this information allows READEX to detect different compute characteristics of the application caused by different inputs.
+The READEX methodology also allows specifying domain knowledge in the form of additional identifiers for rts's. This allows to distinguish rts's of the same region and assign different optimal configurations. For example, an identifier can determine the grid level in a multigrid program, and thus different configurations can be assigned for the relaxation operation executed on the different levels. 
 
 \subsection{Application Pre-analysis}
 \label{sec:dynamism_detection}
 After instrumenting an application and preparing it for analysis, the second step in the READEX approach is to perform a pre-analysis. The objective of this step is to automatically identify and characterize dynamism in the application behaviour. This is critical because the READEX approach is based on tuning hardware, system and application parameters, depending on the dynamism exhibited by the different regions in the application. READEX is capable of identifying and characterizing two types of application dynamism:
 \begin{itemize}
-  \item \textit{Inter-phase dynamism}: This occurs when each phase (execution instance) of a phase region in the application exhibits different characteristics. This results in different values for the measured objective values (execution time) and thus may require different configurations to be applied for the tuning parameters.
-  \item \textit{Intra-phase dynamism}: This occurs when each runtime situation (execution instance) of the significant regions in a phase region exhibits different characteristics and results in different values for the measured objective values (execution time, compute intensity) and thus may need different configurations to be applied for the tuning parameters.
+  \item \textit{Inter-phase dynamism}: This occurs if different instances of the phase region have different execution characteristics. This might lead to different optimal configurations.
+  \item \textit{Intra-phase dynamism}: This occurs rts's executed during a single phase have different characteristics, e.g., invocations of different subroutines.
 \end{itemize}
-The pre-analysis also identifies the regions in the application that contribute significantly to the execution of an application and are referred to as \textit{significant regions}. If no dynamism is identified in the pre-analysis, the rest of the READEX steps are aborted due to the homogeneous behaviour of the application, which will not yield any energy or performance savings from auto-tuning.
+
+The pre-analysis also identifies coarse-granular regions that have enough internal computation to rectify the overhead for switching configurations. These regions are called \textit{significant regions}. 
+
+If no dynamism is identified in the pre-analysis, the rest of the READEX steps are aborted due to the homogeneous behaviour of the application, which will not yield any energy or performance savings from auto-tuning.
 
 Listing \ref{lst:minimd_dynamism_summary} presents an example of the summary of significant regions and the dynamism identified by READEX in the miniMD application.
 
@@ -39,7 +42,10 @@ Listing \ref{lst:minimd_dynamism_summary} presents an example of the summary of 
 	commentstyle=\color{black},
 	escapeinside={(@*}{*@)},
 }
-\begin{lstlisting}[caption={Summary of application pre-analysis},label=lst:minimd_dynamism_summary]
+
+\begin{figure}[!t]
+\centering
+\begin{lstlisting}
 ...
 Significant regions are:
 
@@ -78,6 +84,9 @@ Intra-phase dynamism due to variation in compute intensity of following signific
 void ForceLJ::compute_halfneigh(Atom&, Neighbor&, int) [with int EVFLAG = 0; int GHOST_NEWTON = 1]
 void Neighbor::build(Atom&)
 \end{lstlisting}
+\caption{Summary of the application pre-analysis for miniMD. Significant intra-phase dynamism due to variation in the compute intensity was found for \texttt{compute\_halfneigh()} and \texttt{build()}. In addition, inter-phase dynamism was observed for the phase region due to variation in the execution time.}
+\label{fig:pre-analysisOutput}
+\end{figure}
 
 \subsection{Derivation of Tuning Model}
 \label{sec:tuning_model_generation}
