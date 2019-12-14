@@ -19,7 +19,7 @@ Another check is performed to determine if the region must be tuned by computing
 For a coarse-granular region that is marked as unknown, the calibration mechanism is invoked.
 
 \subsection{Configuration Switching}\label{config-switching}
-The scenario detection step applies a new configuration to the current region only if the region entered is found to be significant and coarse-granular. The setting for each tuning parameter is controlled by a dedicated Parameter Control Plugin (PCP). The RRL switches a configuration by sending a request to the PCPs. 
+The scenario detection step applies a new configuration to the current region only if the region entered is found to be significant and coarse-granular. The setting for each tuning parameter is controlled by a dedicated \textit{Parameter Control Plugin (PCP)}. The RRL switches a configuration by sending a request to the PCPs. 
 
 The RRL supports two different modes for configuration switching: \textit{reset} and \textit{no-reset}. The \textit{reset} mode maintains a configuration stack. Whenever a new configuration is set, the previous configuration is pushed onto this stack. When the corresponding unset occurs (e.g., if an instrumented region is left), the element is removed from the stack and the previous configuration is re-applied. If the \textit{no-reset} mode is selected, the current configuration remains active until a new configuration is set, and the unset is ignored. This behaviour is configurable by the user. By default, the \textit{reset} mode is enabled.
 

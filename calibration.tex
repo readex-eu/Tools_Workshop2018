@@ -2,8 +2,8 @@
 
 As described in Section~\ref{sec:runtime_tuning}, RAT distinguishes known, also called seen, and unknown, also called unseen, rts's.
 Known rts's have been encountered during DTA.
-Based on the used plugin and optimization criterium, optimal configurations for these are saved in the ATM.
-Unkown rts's, however, describe rts which have not been encountered during DTA.
+Based on the used plugin and optimization criteria, optimal configurations for these are saved in the ATM.
+Unknown rts's, however, describe rts which have not been encountered during DTA.
 There are several reasons why unseen rts's might occur.
 The region itself might be known, but some parameters (e.g., application inputs) changed between DTA and runtime.
 Alternatively, an unseen rts could consist of entirely new regions, which were not seen during DTA.
@@ -19,7 +19,7 @@ Based on the result of the measurement, it calculates the so-called Q-Value.
 Afterwards, the algorithm chooses the next optimal status according to the Q-Value and starts from the beginning.
 Figure~\ref{fig:qlearning} shows how the mechanism searches for an energy-efficient optimum.
 It starts an initial setting, with a core frequency of 1.9 GHz and an uncore frequency of 2.2 GHz
-When the application terminates a core frequency of 2.3 GHz and uncore frequency of 2.2 GHz is reached.
+When the application terminates, a core frequency of 2.3 GHz and uncore frequency of 2.2 GHz is reached.
 
 \begin{figure}[!t]
 \centering
